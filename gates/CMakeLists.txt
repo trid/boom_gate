@@ -8,5 +8,5 @@ add_library(gates private/print_gate.cpp)
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_executable(Google_Tests_run tests/print_gate_test.cpp)
-target_link_libraries(Google_Tests_run gates gtest gtest_main)
+add_executable(Gate_Tests_run tests/print_gate_test_suite.cpp)
+target_link_libraries(Gates_Tests_run gates gtest gtest_main)
