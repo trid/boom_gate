@@ -9,12 +9,12 @@ namespace Gates {
 PrintGate::PrintGate(std::ostream& output) : _output(output) {}
 
 void Gates::PrintGate::open() {
-    _output << "Open!";
+    _output << "Open!" << std::endl;
     _isOpen = true;
 }
 
 void Gates::PrintGate::close() {
-    _output << "Close!";
+    _output << "Close!" << std::endl;
     _isOpen = false;
 }
 
