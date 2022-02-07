@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(gates)
 add_subdirectory(payments)
+add_subdirectory(parking)
 
 add_executable(boom_gate main.cpp)
 

@@ -14,8 +14,8 @@ class PaymentSystem {
 public:
     virtual ~PaymentSystem() = default;
 
-    virtual void pay_cash(unsigned int amount, PaymentCallback callback) = 0;
-    virtual void pay_card(CardPaymentData&& cardPaymentData, PaymentCallback callback) = 0;
+    virtual void payInCash(unsigned int amount, PaymentCallback callback) = 0;
+    virtual void payWithCard(CardPaymentData&& cardPaymentData, PaymentCallback callback) = 0;
 };
 
 } // namespace Payments

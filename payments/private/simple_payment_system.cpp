@@ -14,12 +14,12 @@ Payments::SimplePaymentSystem::SimplePaymentSystem(std::unique_ptr<CashPaymentPr
         : _cashPaymentProvider(std::move(cashPaymentProvider)), _cardPaymentProvider(std::move(cardPaymentProvider)) {}
 
 
-void Payments::SimplePaymentSystem::pay_cash(unsigned int amount, Payments::PaymentCallback callback) {
+void Payments::SimplePaymentSystem::payInCash(unsigned int amount, Payments::PaymentCallback callback) {
     _cashPaymentProvider->pay(amount, callback);
 }
 
-void Payments::SimplePaymentSystem::pay_card(Payments::CardPaymentData&& cardPaymentData,
-                                             Payments::PaymentCallback callback) {
+void Payments::SimplePaymentSystem::payWithCard(Payments::CardPaymentData&& cardPaymentData,
+                                                Payments::PaymentCallback callback) {
     _cardPaymentProvider->pay(std::move(cardPaymentData), callback);
 }
 

@@ -32,7 +32,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentInCash) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider));
 
-    paymentSystem.pay_cash(100, [](PaymentResult){});
+    paymentSystem.payInCash(100, [](PaymentResult) {});
 }
 
 TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
@@ -44,7 +44,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider));
 
-    paymentSystem.pay_card({100, "FOO"}, [](PaymentResult){});
+    paymentSystem.payWithCard({100, "FOO"}, [](PaymentResult) {});
 }
 
 } // namespace Payments::Tests
