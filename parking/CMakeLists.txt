@@ -3,7 +3,8 @@ project(parking_library)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(parking private/parking_impl.cpp)
+add_library(parking private/parking_impl.cpp
+        private/parking_factory.cpp)
 
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

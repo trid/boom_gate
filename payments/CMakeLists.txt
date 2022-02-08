@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_library(payments private/printing_card_payment_provider.cpp
         private/printing_cash_payment_provider.cpp
-        private/simple_payment_system.cpp)
+        private/simple_payment_system.cpp
+        private/payment_system_factory.cpp)
 
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

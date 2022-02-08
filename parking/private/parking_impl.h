@@ -22,7 +22,7 @@ public:
 public:
     explicit ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem);
 
-    void addGate(GateUPtr gate);
+    void addGate(GateUPtr gate) override;
 
     void tick(EventProducer& eventProducer) override;
 
