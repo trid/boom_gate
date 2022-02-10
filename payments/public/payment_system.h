@@ -5,8 +5,8 @@
 #ifndef BOOM_GATE_APPLICATION_PAYMENT_SYSTEM_H
 #define BOOM_GATE_APPLICATION_PAYMENT_SYSTEM_H
 
-#include "card_payment_data.h"
 #include "payments_defs.h"
+#include "payment_type.h"
 
 namespace Payments {
 
@@ -14,8 +14,8 @@ class PaymentSystem {
 public:
     virtual ~PaymentSystem() = default;
 
-    virtual void payInCash(unsigned int amount, PaymentCallback callback) = 0;
-    virtual void payWithCard(CardPaymentData&& cardPaymentData, PaymentCallback callback) = 0;
+    virtual void pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData,
+                           PaymentCallback callback) = 0;
 };
 
 } // namespace Payments

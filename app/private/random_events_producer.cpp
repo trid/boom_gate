@@ -7,9 +7,11 @@
 namespace App {
 
 RandomEventsProducer::RandomEventsProducer(size_t maxGates) :
-        _eventDistribution(0, 3),
+        _eventDistribution(0, 2),
         _gatesDistribution(0, maxGates - 1),
-        _hasEventsDistribution(0, 4) {
+        _hasEventsDistribution(0, 4),
+        _paymentTypesDistribution(0, 2),
+        _cardIdDistribution(0, 9) {
 
 }
 
@@ -25,12 +27,7 @@ Parking::Event RandomEventsProducer::poll() {
             break;
         case 2:
             if (_carsLeaving > 0) {
-                return makePayInCashEvent();
-            }
-            break;
-        case 3:
-            if (_carsLeaving > 0) {
-                return makePayWithCardEvent();
+                return makePayEvent();
             }
             break;
     }
@@ -52,16 +49,41 @@ Parking::Event RandomEventsProducer::makeCarLeavesEvent() {
     return Parking::Event{Parking::EventType::CarLeaves, Parking::CarLeaveData{_gatesDistribution(_randomEngine)}};
 }
 
-Parking::Event RandomEventsProducer::makePayInCashEvent() {
+Parking::Event RandomEventsProducer::makePayEvent() {
     --_carsLeaving;
-    return Parking::Event{Parking::EventType::CashPayment,
-                          Parking::CashPaymentData{_gatesDistribution(_randomEngine), 200}};
+    auto paymentType = static_cast<Payments::PaymentType>(_paymentTypesDistribution(_randomEngine));
+
+    return makePayEvent(paymentType);
 }
 
-Parking::Event RandomEventsProducer::makePayWithCardEvent() {
-    --_carsLeaving;
-    return Parking::Event{Parking::EventType::CardPayment,
-                          Parking::CardPaymentData{_gatesDistribution(_randomEngine), 200, "1234432112344321"}};;
+Parking::Event RandomEventsProducer::makePayEvent(Payments::PaymentType paymentType) {
+    unsigned int amount = 200;
+    std::string id;
+
+    switch (paymentType) {
+        case Payments::Cash:
+            break;
+        case Payments::CashCard:
+            id = makeCardId(16);
+            break;
+        case Payments::SubscriptionCard:
+            id = makeCardId(10);
+            break;
+    }
+
+    return Parking::Event{Parking::EventType::Payment,
+                          Parking::PaymentData{
+                                  paymentType,
+                                  _gatesDistribution(_randomEngine), 200, id}};;
 }
+
+std::string RandomEventsProducer::makeCardId(unsigned int length) {
+    std::string result;
+    for (unsigned int i = 0; i < length; i++) {
+        result += std::to_string(_cardIdDistribution(_randomEngine));
+    }
+    return result;
+}
+
 
 } // namespace App

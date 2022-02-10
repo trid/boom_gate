@@ -10,8 +10,7 @@ namespace Parking {
 enum class EventType {
     CarEnters,
     CarLeaves,
-    CashPayment,
-    CardPayment
+    Payment
 };
 
 }

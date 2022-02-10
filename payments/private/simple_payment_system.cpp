@@ -14,13 +14,19 @@ Payments::SimplePaymentSystem::SimplePaymentSystem(std::unique_ptr<CashPaymentPr
         : _cashPaymentProvider(std::move(cashPaymentProvider)), _cardPaymentProvider(std::move(cardPaymentProvider)) {}
 
 
-void Payments::SimplePaymentSystem::payInCash(unsigned int amount, Payments::PaymentCallback callback) {
-    _cashPaymentProvider->pay(amount, callback);
-}
-
-void Payments::SimplePaymentSystem::payWithCard(Payments::CardPaymentData&& cardPaymentData,
-                                                Payments::PaymentCallback callback) {
-    _cardPaymentProvider->pay(std::move(cardPaymentData), callback);
+void Payments::SimplePaymentSystem::pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData, Payments::PaymentCallback callback) {
+    switch (paymentType) {
+        case Cash:
+            _cashPaymentProvider->pay(amount, callback);
+            break;
+        case CashCard:
+            _cardPaymentProvider->pay(amount, paymentData, callback);
+            break;
+        case SubscriptionCard:
+            // TODO: Integrate subscriptions here
+            callback(PaymentResult::Error);
+            break;
+    }
 }
 
 } // namespace Payments

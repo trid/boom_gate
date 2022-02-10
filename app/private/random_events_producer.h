@@ -23,12 +23,15 @@ private:
     std::uniform_int_distribution<std::size_t> _eventDistribution;
     std::uniform_int_distribution<std::size_t> _gatesDistribution;
     std::uniform_int_distribution<unsigned int> _hasEventsDistribution;
+    std::uniform_int_distribution<unsigned int> _paymentTypesDistribution;
+    std::uniform_int_distribution<unsigned int> _cardIdDistribution;
 
     Parking::Event makeCarEntersEvent();
     Parking::Event makeCarLeavesEvent();
 
-    Parking::Event makePayInCashEvent();
-    Parking::Event makePayWithCardEvent();
+    Parking::Event makePayEvent();
+    Parking::Event makePayEvent(Payments::PaymentType paymentType);
+    std::string makeCardId(unsigned int length);
 
     unsigned int _carsEntered{};
     unsigned int _carsLeaving{};

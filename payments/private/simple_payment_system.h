@@ -12,15 +12,16 @@
 namespace Payments {
 
 class CashPaymentProvider;
+
 class CardPaymentProvider;
 
-class SimplePaymentSystem: public PaymentSystem{
+class SimplePaymentSystem : public PaymentSystem {
 public:
     SimplePaymentSystem(std::unique_ptr<CashPaymentProvider> cashPaymentProvider,
                         std::unique_ptr<CardPaymentProvider> cardPaymentProvider);
 
-    void payInCash(unsigned int amount, PaymentCallback callback) override;
-    void payWithCard(CardPaymentData&& cardPaymentData, PaymentCallback callback) override;
+    void pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData,
+             PaymentCallback callback) override;
 
 private:
     std::unique_ptr<CashPaymentProvider> _cashPaymentProvider;

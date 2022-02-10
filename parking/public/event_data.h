@@ -8,6 +8,8 @@
 #include <string>
 #include <variant>
 
+#include "../../payments/public/payment_type.h"
+
 namespace Parking {
 
 struct CarEnterData {
@@ -18,18 +20,14 @@ struct CarLeaveData {
     std::size_t gateId;
 };
 
-struct CashPaymentData {
+struct PaymentData {
+    Payments::PaymentType paymentType;
     std::size_t gateId;
     unsigned int amount;
+    std::string cardId;
 };
 
-struct CardPaymentData {
-    std::size_t gateId;
-    unsigned int amount;
-    std::string cardNumber;
-};
-
-using EventData = std::variant<CarEnterData, CarLeaveData, CashPaymentData, CardPaymentData>;
+using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData>;
 
 } // namespace Parking
 

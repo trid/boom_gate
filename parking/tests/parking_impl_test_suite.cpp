@@ -77,7 +77,7 @@ TEST(ParkingImplTestSuite, carLeaves) {
 TEST(ParkingImplTestSuite, payedInCash) {
     EventProducerMock eventProducer;
     EXPECT_CALL(eventProducer, hasEvents).WillOnce(Return(true)).WillOnce(Return(false));
-    EXPECT_CALL(eventProducer, poll).WillOnce(Return(Event{EventType::CashPayment, CashPaymentData{0, 200}}));
+    EXPECT_CALL(eventProducer, poll).WillOnce(Return(Event{EventType::Payment, CashPaymentData{0, 200}}));
 
     auto gate = std::make_unique<GateMock>();
     EXPECT_CALL(*gate, open).WillOnce(Return());

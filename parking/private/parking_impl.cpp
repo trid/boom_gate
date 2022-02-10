@@ -23,11 +23,8 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
             case EventType::CarLeaves:
                 carLeaves(std::get<CarLeaveData>(event.eventData));
                 break;
-            case EventType::CashPayment:
-                payedInCash(std::get<CashPaymentData>(event.eventData));
-                break;
-            case EventType::CardPayment:
-                payedWithCard(std::get<CardPaymentData>(event.eventData));
+            case EventType::Payment:
+                payed(std::get<PaymentData>(event.eventData));
                 break;
         }
     }
@@ -63,14 +60,8 @@ void ParkingImpl::releaseGate(const size_t gateId) {
     gate->close();
 }
 
-void ParkingImpl::payedInCash(CashPaymentData& data) {
-    _paymentSystem->payInCash(data.amount, [this, data](Payments::PaymentResult result) {
-        onPaymentEvent(data.gateId, result);
-    });
-}
-
-void ParkingImpl::payedWithCard(CardPaymentData& data) {
-    _paymentSystem->payWithCard({data.amount, data.cardNumber}, [this, data](Payments::PaymentResult result) {
+void ParkingImpl::payed(const PaymentData& data) {
+    _paymentSystem->pay(data.amount, data.paymentType, data.cardId, [this, data](Payments::PaymentResult result) {
         onPaymentEvent(data.gateId, result);
     });
 }

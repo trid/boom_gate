@@ -15,7 +15,7 @@ class PrintingCardPaymentProvider : public CardPaymentProvider {
 public:
     explicit PrintingCardPaymentProvider(std::ostream& output);
 
-    void pay(CardPaymentData&& cardPaymentData, PaymentCallback callback) override;
+    void pay(unsigned int amount, const std::string& cardNumber, PaymentCallback callback) override;
 
 private:
     std::ostream& _output;

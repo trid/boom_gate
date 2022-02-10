@@ -9,8 +9,8 @@ namespace Payments {
 
 PrintingCardPaymentProvider::PrintingCardPaymentProvider(std::ostream& output) : _output(output) {}
 
-void PrintingCardPaymentProvider::pay(CardPaymentData&& cardPaymentData, PaymentCallback callback) {
-    _output << "Payed $" << cardPaymentData.amount << " from " << cardPaymentData.cardData << std::endl;
+void PrintingCardPaymentProvider::pay(unsigned int amount, const std::string& cardNumber, PaymentCallback callback) {
+    _output << "Payed $" << amount << " from " << cardNumber << std::endl;
     callback(PaymentResult::Accepted);
 }
 

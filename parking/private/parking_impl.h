@@ -37,8 +37,7 @@ private:
 
     void releaseGate(size_t gateId);
 
-    void payedInCash(CashPaymentData& data);
-    void payedWithCard(CardPaymentData& data);
+    void payed(const PaymentData& data);
 
     void onPaymentEvent(size_t gateId, const Payments::PaymentResult& result);
 };
