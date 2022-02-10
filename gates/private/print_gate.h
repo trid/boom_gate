@@ -17,7 +17,7 @@ public:
 
     void open() override;
     void close() override;
-    bool isOpen() override;
+    bool isOpen() const override;
 
 private:
     std::ostream& _output;

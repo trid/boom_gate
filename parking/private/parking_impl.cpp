@@ -45,7 +45,7 @@ void ParkingImpl::carLeaves(CarLeaveData& data) {
     // TODO Print billing information somehow
 }
 
-bool ParkingImpl::checkGateValid(const std::size_t gateId) {
+bool ParkingImpl::checkGateValid(const std::size_t gateId) const {
     if (gateId >= _gates.size()) {
         // TODO Log error here
         return false;

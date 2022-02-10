@@ -18,7 +18,7 @@ void Gates::PrintGate::close() {
     _isOpen = false;
 }
 
-bool Gates::PrintGate::isOpen() {
+bool Gates::PrintGate::isOpen() const {
     _isOpen;
 }
 

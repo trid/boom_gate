@@ -30,7 +30,7 @@ private:
     std::vector<GateUPtr> _gates;
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
 
-    bool checkGateValid(std::size_t gateId);
+    bool checkGateValid(std::size_t gateId) const;
 
     void carEnters(CarEnterData& data);
     void carLeaves(CarLeaveData& data);
