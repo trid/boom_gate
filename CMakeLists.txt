@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.21)
-project(boom_gate)
+project(boom_gate_application)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(boom_gate main.cpp)
+add_subdirectory(gates)
+add_subdirectory(payments)
+add_subdirectory(parking)
+
+add_executable(boom_gate app/main.cpp
+        app/private/random_events_producer.cpp)
+target_link_libraries(boom_gate gates parking payments)
+
+
