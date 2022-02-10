@@ -6,11 +6,10 @@
 
 namespace App {
 
-RandomEventsProducer::RandomEventsProducer(size_t maxGates):
-    _eventDistribution(0, 3),
-    _gatesDistribution(0, maxGates - 1),
-    _hasEventsDistribution(0, 4)
-{
+RandomEventsProducer::RandomEventsProducer(size_t maxGates) :
+        _eventDistribution(0, 3),
+        _gatesDistribution(0, maxGates - 1),
+        _hasEventsDistribution(0, 4) {
 
 }
 
@@ -20,13 +19,19 @@ Parking::Event RandomEventsProducer::poll() {
             return makeCarEntersEvent();
             break;
         case 1:
-            return makeCarLeavesEvent();
+            if (_carsEntered > 0) {
+                return makeCarLeavesEvent();
+            }
             break;
         case 2:
-            return makePayInCashEvent();
+            if (_carsLeaving > 0) {
+                return makePayInCashEvent();
+            }
             break;
         case 3:
-            return makePayWithCardEvent();
+            if (_carsLeaving > 0) {
+                return makePayWithCardEvent();
+            }
             break;
     }
     return makeCarEntersEvent();
@@ -37,19 +42,26 @@ bool RandomEventsProducer::hasEvents() {
 }
 
 Parking::Event RandomEventsProducer::makeCarEntersEvent() {
+    ++_carsEntered;
     return Parking::Event{Parking::EventType::CarEnters, Parking::CarEnterData{_gatesDistribution(_randomEngine)}};
 }
 
 Parking::Event RandomEventsProducer::makeCarLeavesEvent() {
+    --_carsEntered;
+    ++_carsLeaving;
     return Parking::Event{Parking::EventType::CarLeaves, Parking::CarLeaveData{_gatesDistribution(_randomEngine)}};
 }
 
 Parking::Event RandomEventsProducer::makePayInCashEvent() {
-    return Parking::Event{Parking::EventType::CashPayment, Parking::CashPaymentData{_gatesDistribution(_randomEngine), 200}};
+    --_carsLeaving;
+    return Parking::Event{Parking::EventType::CashPayment,
+                          Parking::CashPaymentData{_gatesDistribution(_randomEngine), 200}};
 }
 
 Parking::Event RandomEventsProducer::makePayWithCardEvent() {
-    return Parking::Event{Parking::EventType::CardPayment, Parking::CardPaymentData{_gatesDistribution(_randomEngine), 200, "1234432112344321"}};;
+    --_carsLeaving;
+    return Parking::Event{Parking::EventType::CardPayment,
+                          Parking::CardPaymentData{_gatesDistribution(_randomEngine), 200, "1234432112344321"}};;
 }
 
 } // namespace App

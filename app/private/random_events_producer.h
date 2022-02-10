@@ -28,8 +28,10 @@ private:
     Parking::Event makeCarLeavesEvent();
 
     Parking::Event makePayInCashEvent();
-
     Parking::Event makePayWithCardEvent();
+
+    unsigned int _carsEntered{};
+    unsigned int _carsLeaving{};
 };
 
 } // namespace App
