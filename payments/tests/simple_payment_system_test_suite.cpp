@@ -20,7 +20,7 @@ public:
 
 class CardPaymentProviderMock: public CardPaymentProvider{
 public:
-    MOCK_METHOD(void, pay, (CardPaymentData&&, PaymentCallback), (override));
+    MOCK_METHOD(void, pay, (unsigned int, const std::string&, PaymentCallback), (override));
 };
 
 TEST(PrintingCardPaymentProviderTestSuite, paymentInCash) {
@@ -32,7 +32,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentInCash) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider));
 
-    paymentSystem.payInCash(100, [](PaymentResult) {});
+    paymentSystem.pay(PaymentType::Cash, 100, "", [](PaymentResult) {});
 }
 
 TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
@@ -44,7 +44,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider));
 
-    paymentSystem.payWithCard({100, "FOO"}, [](PaymentResult) {});
+    paymentSystem.pay(PaymentType::CashCard, 100, "FOO", [](PaymentResult) {});
 }
 
 } // namespace Payments::Tests

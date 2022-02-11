@@ -61,7 +61,7 @@ void ParkingImpl::releaseGate(const size_t gateId) {
 }
 
 void ParkingImpl::payed(const PaymentData& data) {
-    _paymentSystem->pay(data.amount, data.paymentType, data.cardId, [this, data](Payments::PaymentResult result) {
+    _paymentSystem->pay(data.paymentType, data.amount, data.cardId, [this, data](Payments::PaymentResult result) {
         onPaymentEvent(data.gateId, result);
     });
 }

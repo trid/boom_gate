@@ -20,8 +20,8 @@ public:
     SimplePaymentSystem(std::unique_ptr<CashPaymentProvider> cashPaymentProvider,
                         std::unique_ptr<CardPaymentProvider> cardPaymentProvider);
 
-    void pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData,
-             PaymentCallback callback) override;
+    void
+    pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData, PaymentCallback callback) override;
 
 private:
     std::unique_ptr<CashPaymentProvider> _cashPaymentProvider;
