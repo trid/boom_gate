@@ -12,3 +12,7 @@ add_executable(boom_gate app/main.cpp
 target_link_libraries(boom_gate gates parking payments)
 
 
+include(CTest)
+add_test(NAME GatesTests COMMAND Gates_Tests_run)
+add_test(NAME PaymentsTests COMMAND Payments_Tests_run)
+add_test(NAME ParkingTests COMMAND Parking_Tests_run)

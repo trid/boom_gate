@@ -45,7 +45,7 @@ TEST(BoomGateTestSuite, testOpenClose) {
     boomGate.open();
     boomGate.close();
 
-    ASSERT_EQ("Open!\nClose!", out.str());
+    ASSERT_EQ("Open!\nClose!\n", out.str());
     ASSERT_FALSE(boomGate.isOpen());
 }
 
