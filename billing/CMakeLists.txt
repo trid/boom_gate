@@ -3,7 +3,8 @@ project(gate_library)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(billing private/ticks_based_billing_system.cpp)
+add_library(billing private/ticks_based_billing_system.cpp
+        private/billing_system_factory.cpp)
 
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

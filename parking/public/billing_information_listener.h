@@ -10,6 +10,7 @@
 namespace Parking {
 
 class BillingInformationListener {
+public:
     virtual void billedFor(size_t gateId, unsigned int amount) = 0;
 };
 

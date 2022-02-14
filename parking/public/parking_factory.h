@@ -6,10 +6,15 @@
 #define BOOM_GATE_APPLICATION_PARKING_FACTORY_H
 
 #include <memory>
+#include <unordered_map>
 
 namespace Payments {
 class PaymentSystem;
 } // namespace Payments
+
+namespace Billing {
+class BillingSystem;
+}
 
 namespace Parking {
 
@@ -17,7 +22,9 @@ class Parking;
 
 class ParkingFactory {
 public:
-    static std::unique_ptr<Parking> create(std::unique_ptr<Payments::PaymentSystem> paymentSystem);
+    static std::unique_ptr<Parking> create(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
+                                           std::unique_ptr<Billing::BillingSystem> billingSystem,
+                                           std::unordered_map<std::string, unsigned int>& carsRegistry);
 };
 
 } // namespace Parking

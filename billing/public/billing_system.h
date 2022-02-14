@@ -11,6 +11,8 @@ namespace Billing {
 
 class BillingSystem {
 public:
+    virtual ~BillingSystem() = default;
+
     virtual unsigned int getBill(const std::string& carId, unsigned int currentTick) = 0;
 };
 

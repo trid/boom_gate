@@ -8,7 +8,7 @@ namespace Billing {
 
 constexpr unsigned int pricePerTick = 10;
 
-TicksBasedBillingSystem::TicksBasedBillingSystem(std::unordered_map<std::string, unsigned int>& registry) : _registry(
+TicksBasedBillingSystem::TicksBasedBillingSystem(const std::unordered_map<std::string, unsigned int>& registry) : _registry(
         registry) {}
 
 unsigned int TicksBasedBillingSystem::getBill(const std::string& carId, unsigned int currentTick) {

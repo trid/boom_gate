@@ -20,7 +20,7 @@ class Parking {
 public:
     virtual void tick(EventProducer& eventProducer) = 0;
     virtual void addGate(std::unique_ptr<Gates::Gate> gate) = 0;
-    virtual void addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) = 0;
+    virtual void setBillingListener(BillingInformationListener& billingListener) = 0;
 };
 
 } // namespace Parking

@@ -6,8 +6,10 @@
 
 namespace Parking {
 
-ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem) : _paymentSystem(
-        std::move(paymentSystem)) {}
+ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
+                         std::unique_ptr<Billing::BillingSystem> billingSystem,
+                         std::unordered_map<std::string, unsigned int>& carsRegistry) : _paymentSystem(
+        std::move(paymentSystem)), _billingSystem(std::move(billingSystem)), _carsRegistry(carsRegistry) {}
 
 void ParkingImpl::addGate(ParkingImpl::GateUPtr gate) {
     _gates.push_back(std::move(gate));
@@ -28,10 +30,15 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
                 break;
         }
     }
+
+    // TODO: Make tick counter an external dependency
+    ++_tickNumber;
 }
 
 void ParkingImpl::carEnters(CarEnterData& data) {
     checkGateValid(data.gateId);
+
+    _carsRegistry[data.carId] = _tickNumber;
 
     releaseGate(data.gateId);
 }
@@ -42,7 +49,12 @@ void ParkingImpl::carLeaves(CarLeaveData& data) {
     std::unique_ptr<Gates::Gate>& gate = _gates[data.gateId];
     // Ensure gate is closed
     gate->close();
-    // TODO Print billing information somehow
+
+    _gateToCarMap[data.gateId] = data.carId;
+    auto billingAmount = _billingSystem->getBill(data.carId, _tickNumber);
+    if (_billingListener) {
+        _billingListener->billedFor(data.gateId, billingAmount);
+    }
 }
 
 bool ParkingImpl::checkGateValid(const std::size_t gateId) const {
@@ -67,16 +79,20 @@ void ParkingImpl::payed(const PaymentData& data) {
 }
 
 void ParkingImpl::onPaymentEvent(const size_t gateId, const Payments::PaymentResult& result) {
-    if (result == Payments::Accepted) {
-        releaseGate(gateId);
+    if (result != Payments::Accepted) {
+        // TODO Log payment errors
         return;
     }
-    // TODO Log payment errors
+
+    const auto carId = _gateToCarMap[gateId];
+    _carsRegistry.erase(carId);
+    _gateToCarMap.erase(gateId);
+    releaseGate(gateId);
 }
 
-void ParkingImpl::addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) {
+void ParkingImpl::setBillingListener(BillingInformationListener& billingListener) {
     // TODO Is it possible to have an array of listeners here?
-    _billingListener = std::move(billingListener);
+    _billingListener = billingListener;
 }
 
 } // namespace Parking

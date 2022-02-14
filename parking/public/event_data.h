@@ -14,10 +14,12 @@ namespace Parking {
 
 struct CarEnterData {
     std::size_t gateId;
+    std::string carId;
 };
 
 struct CarLeaveData {
     std::size_t gateId;
+    std::string carId;
 };
 
 struct PaymentData {

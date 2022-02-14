@@ -13,11 +13,11 @@ namespace Billing {
 
 class TicksBasedBillingSystem: public BillingSystem {
 public:
-    TicksBasedBillingSystem(std::unordered_map<std::string, unsigned int>& registry);
+    explicit TicksBasedBillingSystem(const std::unordered_map<std::string, unsigned int>& registry);
 
     unsigned int getBill(const std::string& carId, unsigned int currentTick) override;
 private:
-    std::unordered_map<std::string, unsigned int>& _registry;
+    const std::unordered_map<std::string, unsigned int>& _registry;
 };
 
 } // namespace Billing

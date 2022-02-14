@@ -10,7 +10,7 @@ add_subdirectory(billing)
 
 add_executable(boom_gate app/main.cpp
         app/private/random_events_producer.cpp)
-target_link_libraries(boom_gate gates parking payments)
+target_link_libraries(boom_gate gates parking payments billing)
 
 
 include(CTest)
