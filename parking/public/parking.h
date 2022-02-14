@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "billing_information_listener.h"
 #include "event_producer.h"
 
 namespace Gates {
@@ -19,6 +20,7 @@ class Parking {
 public:
     virtual void tick(EventProducer& eventProducer) = 0;
     virtual void addGate(std::unique_ptr<Gates::Gate> gate) = 0;
+    virtual void addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) = 0;
 };
 
 } // namespace Parking

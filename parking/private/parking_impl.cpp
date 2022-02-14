@@ -74,4 +74,9 @@ void ParkingImpl::onPaymentEvent(const size_t gateId, const Payments::PaymentRes
     // TODO Log payment errors
 }
 
+void ParkingImpl::addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) {
+    // TODO Is it possible to have an array of listeners here?
+    _billingListener = std::move(billingListener);
+}
+
 } // namespace Parking

@@ -26,9 +26,12 @@ public:
 
     void tick(EventProducer& eventProducer) override;
 
+    void addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) override;
+
 private:
     std::vector<GateUPtr> _gates;
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
+    std::unique_ptr<BillingInformationListener> _billingListener
 
     bool checkGateValid(std::size_t gateId) const;
 
