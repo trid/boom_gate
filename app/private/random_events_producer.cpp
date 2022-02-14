@@ -74,7 +74,7 @@ Parking::Event RandomEventsProducer::makePayEvent(Payments::PaymentType paymentT
     return Parking::Event{Parking::EventType::Payment,
                           Parking::PaymentData{
                                   paymentType,
-                                  _gatesDistribution(_randomEngine), 200, id}};;
+                                  id, amount}};
 }
 
 std::string RandomEventsProducer::makeCardId(unsigned int length) {
@@ -83,6 +83,10 @@ std::string RandomEventsProducer::makeCardId(unsigned int length) {
         result += std::to_string(_cardIdDistribution(_randomEngine));
     }
     return result;
+}
+
+void RandomEventsProducer::billedFor(size_t gateId, unsigned int amount) {
+    // TODO: Add billing info here
 }
 
 

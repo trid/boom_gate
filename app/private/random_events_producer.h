@@ -7,16 +7,19 @@
 
 #include <random>
 
+#include "../../parking/public/billing_information_listener.h"
 #include "../../parking/public/event_producer.h"
 
 namespace App {
 
-class RandomEventsProducer: public Parking::EventProducer {
+class RandomEventsProducer: public Parking::EventProducer, public Parking::BillingInformationListener {
 public:
     explicit RandomEventsProducer(size_t maxGates);
 
     Parking::Event poll() override;
     bool hasEvents() override;
+
+    void billedFor(size_t gateId, unsigned int amount) override;
 
 private:
     std::default_random_engine _randomEngine;

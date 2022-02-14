@@ -18,13 +18,13 @@ class BillingSystem;
 
 namespace Parking {
 
+class GateControlStrategy;
 class Parking;
 
 class ParkingFactory {
 public:
     static std::unique_ptr<Parking> create(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
-                                           std::unique_ptr<Billing::BillingSystem> billingSystem,
-                                           std::unordered_map<std::string, unsigned int>& carsRegistry);
+                                           std::unique_ptr<GateControlStrategy> gateControlStrategy);
 };
 
 } // namespace Parking

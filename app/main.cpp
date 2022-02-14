@@ -6,6 +6,8 @@
 #include "../billing/public/billing_system.h"
 #include "../parking/public/parking.h"
 #include "../parking/public/parking_factory.h"
+#include "../parking/public/gate_control_strategy.h"
+#include "../parking/public/gate_control_strategy_factory.h"
 #include "../payments/public/payment_system.h"
 #include "../payments/public/payment_system_factory.h"
 #include "../gates/public/gate.h"
@@ -14,15 +16,17 @@
 #include "private/random_events_producer.h"
 
 int main(int, char**) {
+    App::RandomEventsProducer randomEventsProducer(3);
+
     std::unordered_map<std::string, unsigned int> carsRegistry;
     auto paymentSystem = Payments::PaymentSystemFactory::create();
     auto billingSystem = Billing::BillingSystemFactory::create(carsRegistry);
-    auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(billingSystem), carsRegistry);
+    auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(std::move(billingSystem),
+                                                                                    carsRegistry, randomEventsProducer);
+    auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy));
     parking->addGate(Gates::GateFactory::create());
     parking->addGate(Gates::GateFactory::create());
     parking->addGate(Gates::GateFactory::create());
-
-    App::RandomEventsProducer randomEventsProducer(3);
 
     while (true) {
         parking->tick(randomEventsProducer);
