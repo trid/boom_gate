@@ -11,10 +11,10 @@
 
 namespace Parking {
 
-PayOnGateStrategy::PayOnGateStrategy(std::unique_ptr<Billing::BillingSystem> billingSystem,
+PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                     const boost::optional<BillingInformationListener&>& billingListener) : _carsRegistry(
-        carsRegistry), _billingSystem(std::move(billingSystem)), _billingListener(billingListener) {}
+                                     BillingInformationListener& billingListener) : _carsRegistry(
+        carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener) {}
 
 void PayOnGateStrategy::onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) {
     checkGateValid(gateId);
@@ -32,10 +32,8 @@ void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carI
     gate->close();
 
     _carToGateId[carId] = gateId;
-    auto billingAmount = _billingSystem->getBill(carId, tickId);
-    if (_billingListener) {
-        _billingListener->billedFor(gateId, billingAmount);
-    }
+    auto billingAmount = _billingSystem.getBill(carId, tickId);
+    _billingListener.billedFor(gateId, billingAmount);
 }
 
 void PayOnGateStrategy::onPayment(const std::string& carId, Payments::PaymentResult paymentResult) {

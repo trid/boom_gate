@@ -22,9 +22,9 @@ class GateControlStrategy;
 
 class GateControlStrategyFactory {
 public:
-    static std::unique_ptr<GateControlStrategy> createPayOnGate(std::unique_ptr<Billing::BillingSystem> billingSystem,
+    static std::unique_ptr<GateControlStrategy> createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                 std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                const boost::optional<BillingInformationListener&>& billingListener);
+                                                                BillingInformationListener& billingListener);
 };
 
 } // namespace Parking

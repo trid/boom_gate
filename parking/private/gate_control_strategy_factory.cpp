@@ -12,10 +12,10 @@
 namespace Parking {
 
 // static
-std::unique_ptr<GateControlStrategy> GateControlStrategyFactory::createPayOnGate(std::unique_ptr<Billing::BillingSystem> billingSystem,
+std::unique_ptr<GateControlStrategy> GateControlStrategyFactory::createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                                  std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                                 const boost::optional<BillingInformationListener&>& billingListener) {
-    return std::make_unique<PayOnGateStrategy>(std::move(billingSystem), carsRegistry, billingListener);
+                                                                                 BillingInformationListener& billingListener) {
+    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener);
 }
 
 } // namespace Parking

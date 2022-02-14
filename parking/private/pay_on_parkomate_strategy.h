@@ -1,15 +1,15 @@
 //
-// Created by TriD on 14.02.2022.
+// Created by TriD on 15.02.2022.
 //
 
-#ifndef BOOM_GATE_APPLICATION_PAY_ON_GATE_STRATEGY_H
-#define BOOM_GATE_APPLICATION_PAY_ON_GATE_STRATEGY_H
-
-#include <unordered_map>
-#include <vector>
-#include <boost/optional.hpp>
+#ifndef BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H
+#define BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H
 
 #include "../public/gate_control_strategy.h"
+
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 namespace Billing {
 class BillingSystem;
@@ -19,11 +19,12 @@ namespace Parking {
 
 class BillingInformationListener;
 
-class PayOnGateStrategy : public GateControlStrategy {
+using GateUPtr = std::unique_ptr<Gates::Gate>;
+
+class PayOnParkomateStrategy: public GateControlStrategy{
 public:
-    PayOnGateStrategy(Billing::BillingSystem& billingSystem,
-                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                      BillingInformationListener& billingListener);
+    PayOnParkomateStrategy(std::unordered_map<std::string, unsigned int>& carsRegistry,
+                           Billing::BillingSystem& billingSystem, BillingInformationListener& billingListener);
 
     void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
@@ -31,20 +32,18 @@ public:
     void addGate(std::unique_ptr<Gates::Gate> gate) override;
 
 private:
-    using GateUPtr = std::unique_ptr<Gates::Gate>;
-
-private:
-    bool checkGateValid(std::size_t gateId);
-    void releaseGate(size_t gateId);
-
     std::vector<GateUPtr> _gates;
     std::unordered_map<std::string, unsigned int>& _carsRegistry;
-    std::unordered_map<std::string, unsigned int> _carToGateId;
+    std::unordered_set<std::string> _payedCars;
 
     Billing::BillingSystem& _billingSystem;
     BillingInformationListener& _billingListener;
+
+    void checkGateValid(size_t gateId);
+
+    void releaseGate(size_t gateId);
 };
 
 } // namespace Parking
 
-#endif //BOOM_GATE_APPLICATION_PAY_ON_GATE_STRATEGY_H
+#endif //BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H

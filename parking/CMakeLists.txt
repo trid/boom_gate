@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(parking private/parking_impl.cpp
         private/parking_factory.cpp
         private/pay_on_gate_strategy.cpp
+        private/pay_on_parkomate_strategy.cpp
         private/gate_control_strategy_factory.cpp)
 
 # Tests ------------------------------------------------------------
