@@ -18,13 +18,16 @@ class BillingSystem;
 
 namespace Parking {
 
+class BillingInformationListener;
 class GateControlStrategy;
 class Parking;
 
 class ParkingFactory {
 public:
     static std::unique_ptr<Parking> create(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
-                                           std::unique_ptr<GateControlStrategy> gateControlStrategy);
+                                           std::unique_ptr<GateControlStrategy> gateControlStrategy,
+                                           Billing::BillingSystem& billingSystem,
+                                           BillingInformationListener& billingInformationListener);
 };
 
 } // namespace Parking

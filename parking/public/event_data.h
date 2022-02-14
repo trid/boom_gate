@@ -29,11 +29,11 @@ struct PaymentData {
     std::string cardId;
 };
 
-struct RequestBilling {
+struct RequestBillingData {
     std::string carId;
 };
 
-using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData, RequestBilling>;
+using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData, RequestBillingData>;
 
 } // namespace Parking
 

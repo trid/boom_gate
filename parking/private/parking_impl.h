@@ -25,7 +25,9 @@ using GateUPtr = std::unique_ptr<Gates::Gate>;
 class ParkingImpl: public Parking {
 public:
     explicit ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
-                         std::unique_ptr<GateControlStrategy> gateControlStrategy);
+                         std::unique_ptr<GateControlStrategy> gateControlStrategy,
+                         Billing::BillingSystem& billingSystem,
+                         BillingInformationListener& billingInformationListener);
 
     void addGate(GateUPtr gate) override;
 
@@ -38,10 +40,13 @@ private:
     void payed(const PaymentData& data);
 
     void onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result);
+    void requestBilling(RequestBillingData& data);
 
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
     unsigned int _tickNumber = 0;
     std::unique_ptr<GateControlStrategy> _gateControlStrategy;
+    Billing::BillingSystem& _billingSystem;
+    BillingInformationListener& _billingListener;
 };
 
 } // namespace Parking

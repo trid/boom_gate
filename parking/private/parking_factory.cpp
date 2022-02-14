@@ -10,8 +10,11 @@ namespace Parking {
 
 // static
 std::unique_ptr<Parking> ParkingFactory::create(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
-                                                std::unique_ptr<GateControlStrategy> gateControlStrategy) {
-    return std::make_unique<ParkingImpl>(std::move(paymentSystem), std::move(gateControlStrategy));
+                                                std::unique_ptr<GateControlStrategy> gateControlStrategy,
+                                                Billing::BillingSystem& billingSystem,
+                                                BillingInformationListener& billingInformationListener) {
+    return std::make_unique<ParkingImpl>(std::move(paymentSystem), std::move(gateControlStrategy), billingSystem,
+                                         billingInformationListener);
 }
 
 } // namespace Parking
