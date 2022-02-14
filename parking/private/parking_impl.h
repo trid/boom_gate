@@ -29,10 +29,6 @@ public:
     void addBillingListener(std::unique_ptr<BillingInformationListener> billingListener) override;
 
 private:
-    std::vector<GateUPtr> _gates;
-    std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
-    std::unique_ptr<BillingInformationListener> _billingListener
-
     bool checkGateValid(std::size_t gateId) const;
 
     void carEnters(CarEnterData& data);
@@ -43,6 +39,10 @@ private:
     void payed(const PaymentData& data);
 
     void onPaymentEvent(size_t gateId, const Payments::PaymentResult& result);
+
+    std::vector<GateUPtr> _gates;
+    std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
+    std::unique_ptr<BillingInformationListener> _billingListener;
 };
 
 } // namespace Parking
