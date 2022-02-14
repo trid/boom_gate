@@ -43,7 +43,7 @@ private:
 
     void payed(const PaymentData& data);
 
-    void onPaymentEvent(size_t gateId, const Payments::PaymentResult& result);
+    void onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result);
 
     std::vector<GateUPtr> _gates;
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
@@ -51,7 +51,7 @@ private:
     boost::optional<BillingInformationListener&> _billingListener;
     unsigned int _tickNumber = 0;
     std::unordered_map<std::string, unsigned int>& _carsRegistry;
-    std::unordered_map<unsigned int, std::string> _gateToCarMap;
+    std::unordered_map<std::string, unsigned int> _carToGateId;
 };
 
 } // namespace Parking

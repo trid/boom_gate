@@ -50,7 +50,7 @@ void ParkingImpl::carLeaves(CarLeaveData& data) {
     // Ensure gate is closed
     gate->close();
 
-    _gateToCarMap[data.gateId] = data.carId;
+    _carToGateId[data.carId] = data.gateId;
     auto billingAmount = _billingSystem->getBill(data.carId, _tickNumber);
     if (_billingListener) {
         _billingListener->billedFor(data.gateId, billingAmount);
@@ -74,19 +74,19 @@ void ParkingImpl::releaseGate(const size_t gateId) {
 
 void ParkingImpl::payed(const PaymentData& data) {
     _paymentSystem->pay(data.paymentType, data.amount, data.cardId, [this, data](Payments::PaymentResult result) {
-        onPaymentEvent(data.gateId, result);
+        onPaymentEvent(data.carId, result);
     });
 }
 
-void ParkingImpl::onPaymentEvent(const size_t gateId, const Payments::PaymentResult& result) {
+void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result) {
     if (result != Payments::Accepted) {
         // TODO Log payment errors
         return;
     }
 
-    const auto carId = _gateToCarMap[gateId];
+    auto gateId = _carToGateId[carId];
     _carsRegistry.erase(carId);
-    _gateToCarMap.erase(gateId);
+    _carToGateId.erase(carId);
     releaseGate(gateId);
 }
 

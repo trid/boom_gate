@@ -24,12 +24,16 @@ struct CarLeaveData {
 
 struct PaymentData {
     Payments::PaymentType paymentType;
-    std::size_t gateId;
+    std::string carId;
     unsigned int amount;
     std::string cardId;
 };
 
-using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData>;
+struct RequestBilling {
+    std::string carId;
+};
+
+using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData, RequestBilling>;
 
 } // namespace Parking
 
