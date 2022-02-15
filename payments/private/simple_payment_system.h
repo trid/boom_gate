@@ -12,13 +12,14 @@
 namespace Payments {
 
 class CashPaymentProvider;
-
 class CardPaymentProvider;
+class SubscriptionCardPaymentProvider;
 
 class SimplePaymentSystem : public PaymentSystem {
 public:
     SimplePaymentSystem(std::unique_ptr<CashPaymentProvider> cashPaymentProvider,
-                        std::unique_ptr<CardPaymentProvider> cardPaymentProvider);
+                        std::unique_ptr<CardPaymentProvider> cardPaymentProvider,
+                        std::unique_ptr<SubscriptionCardPaymentProvider> subscriptionCardPaymentProvider);
 
     void
     pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData, PaymentCallback callback) override;
@@ -26,6 +27,7 @@ public:
 private:
     std::unique_ptr<CashPaymentProvider> _cashPaymentProvider;
     std::unique_ptr<CardPaymentProvider> _cardPaymentProvider;
+    std::unique_ptr<SubscriptionCardPaymentProvider> _subscriptionCardPaymentProvider;
 };
 
 } // namespace Payments
