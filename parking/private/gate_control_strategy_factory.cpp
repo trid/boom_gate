@@ -5,7 +5,7 @@
 #include "../public/gate_control_strategy_factory.h"
 
 #include "../private/pay_on_gate_strategy.h"
-#include "../private/pay_on_parkomate_strategy.h"
+#include "../private/pay_on_ticket_machine_strategy.h"
 
 #include "../../billing/public/billing_system.h"
 #include "../../gates/public/gates_controller.h"
@@ -25,7 +25,7 @@ GateControlStrategyFactory::createPayOnTicketMachine(Billing::BillingSystem& bil
                                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
                                                      BillingInformationListener& billingListener,
                                                      Gates::GatesController& gatesController) {
-    return std::make_unique<PayOnParkomateStrategy>(billingSystem, carsRegistry, billingListener, gatesController);
+    return std::make_unique<PayOnTicketMachineStrategy>(billingSystem, carsRegistry, billingListener, gatesController);
 }
 
 } // namespace Parking

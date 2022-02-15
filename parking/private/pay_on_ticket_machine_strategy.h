@@ -2,8 +2,8 @@
 // Created by TriD on 15.02.2022.
 //
 
-#ifndef BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H
-#define BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H
+#ifndef BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
+#define BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 
 #include "../public/gate_control_strategy.h"
 
@@ -23,11 +23,11 @@ namespace Parking {
 
 class BillingInformationListener;
 
-class PayOnParkomateStrategy: public GateControlStrategy{
+class PayOnTicketMachineStrategy: public GateControlStrategy{
 public:
-    PayOnParkomateStrategy(Billing::BillingSystem& billingSystem,
-                           std::unordered_map<std::string, unsigned int>& carsRegistry,
-                           BillingInformationListener& billingListener, Gates::GatesController& gateController);
+    PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
+                               std::unordered_map<std::string, unsigned int>& carsRegistry,
+                               BillingInformationListener& billingListener, Gates::GatesController& gateController);
 
     void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
@@ -45,4 +45,4 @@ private:
 
 } // namespace Parking
 
-#endif //BOOM_GATE_APPLICATION_PAY_ON_PARKOMATE_STRATEGY_H
+#endif //BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H

@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "tests_shared.h"
+
 #include "../public/gate_control_strategy_factory.h"
 #include "../private/parking_impl.h"
 #include "../../gates/public/gate.h"
@@ -34,29 +36,6 @@ public:
     MOCK_METHOD(void, pay,
                 (Payments::PaymentType paymentType, unsigned int amount, const std::string& paymentData, Payments::PaymentCallback),
                 (override));
-};
-
-class BillingSystemMock : public Billing::BillingSystem {
-public:
-    MOCK_METHOD(unsigned int, getBill, (const std::string&, unsigned int), (override));
-};
-
-class BillingListenerMock : public BillingInformationListener {
-public:
-    BillingListenerMock() {
-        ON_CALL(*this, billedFor).WillByDefault(
-                [this](size_t, unsigned int amount) {
-                    _billedAmount = amount;
-                });
-    }
-
-    unsigned int getBilledAmount() const {
-        return _billedAmount;
-    }
-
-    MOCK_METHOD(void, billedFor, (size_t, unsigned int), (override));
-private:
-    unsigned int _billedAmount = 0;
 };
 
 class GateMock : public Gates::Gate {
