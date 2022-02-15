@@ -73,8 +73,8 @@ Parking::Event RandomEventsProducer::makePayEvent(Payments::PaymentType paymentT
 
     return Parking::Event{Parking::EventType::Payment,
                           Parking::PaymentData{
-                                  paymentType,
-                                  id, amount}};
+                                  paymentType, "ab123c",
+                                  amount, id}};
 }
 
 std::string RandomEventsProducer::makeCardId(unsigned int length) {
