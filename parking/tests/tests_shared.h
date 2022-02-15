@@ -5,7 +5,7 @@
 #ifndef BOOM_GATE_APPLICATION_TESTS_SHARED_H
 #define BOOM_GATE_APPLICATION_TESTS_SHARED_H
 
-#include "../public/billing_information_listener.h"
+#include "../../billing/public/billing_information_listener.h"
 #include "../../billing/public/billing_system.h"
 
 namespace Parking::Test {
@@ -15,7 +15,7 @@ public:
     MOCK_METHOD(unsigned int, getBill, (const std::string&, unsigned int), (override));
 };
 
-class BillingListenerMock : public BillingInformationListener {
+class BillingListenerMock : public Billing::BillingInformationListener {
 public:
     BillingListenerMock() {
         ON_CALL(*this, billedFor).WillByDefault(

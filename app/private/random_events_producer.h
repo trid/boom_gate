@@ -7,12 +7,12 @@
 
 #include <random>
 
-#include "../../parking/public/billing_information_listener.h"
+#include "../../billing/public/billing_information_listener.h"
 #include "../../parking/public/event_producer.h"
 
 namespace App {
 
-class RandomEventsProducer: public Parking::EventProducer, public Parking::BillingInformationListener {
+class RandomEventsProducer: public Parking::EventProducer, public Billing::BillingInformationListener {
 public:
     explicit RandomEventsProducer(size_t maxGates);
 

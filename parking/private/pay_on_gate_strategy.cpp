@@ -4,7 +4,7 @@
 
 #include "pay_on_gate_strategy.h"
 
-#include "../public/billing_information_listener.h"
+#include "../../billing/public/billing_information_listener.h"
 
 #include "../../billing/public/billing_system.h"
 #include "../../gates/public/gates_controller.h"
@@ -13,7 +13,7 @@ namespace Parking {
 
 PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                     BillingInformationListener& billingListener,
+                                     Billing::BillingInformationListener& billingListener,
                                      Gates::GatesController& gateController) :
         _carsRegistry(carsRegistry),
         _billingSystem(billingSystem),

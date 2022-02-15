@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "billing_information_listener.h"
+#include "../../billing/public/billing_information_listener.h"
 #include "event_producer.h"
 
 namespace Gates {

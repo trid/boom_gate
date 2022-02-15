@@ -11,6 +11,7 @@
 #include <boost/optional.hpp>
 
 namespace Billing {
+class BillingInformationListener;
 class BillingSystem;
 } // namespace Billing
 
@@ -20,19 +21,17 @@ class GatesController;
 
 namespace Parking {
 
-class BillingInformationListener;
-
 class GateControlStrategy;
 
 class GateControlStrategyFactory {
 public:
     static std::unique_ptr<GateControlStrategy> createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                 std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                BillingInformationListener& billingListener,
+                                                                Billing::BillingInformationListener& billingListener,
                                                                 Gates::GatesController& gatesController);
     static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(Billing::BillingSystem& billingSystem,
                                                                 std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                BillingInformationListener& billingListener,
+                                                                Billing::BillingInformationListener& billingListener,
                                                                 Gates::GatesController& gatesController);
 };
 

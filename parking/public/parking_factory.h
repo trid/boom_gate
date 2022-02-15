@@ -13,12 +13,12 @@ class PaymentSystem;
 } // namespace Payments
 
 namespace Billing {
+class BillingInformationListener;
 class BillingSystem;
 }
 
 namespace Parking {
 
-class BillingInformationListener;
 class GateControlStrategy;
 class Parking;
 
@@ -27,7 +27,7 @@ public:
     static std::unique_ptr<Parking> create(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
                                            std::unique_ptr<GateControlStrategy> gateControlStrategy,
                                            Billing::BillingSystem& billingSystem,
-                                           BillingInformationListener& billingInformationListener);
+                                           Billing::BillingInformationListener& billingInformationListener);
 };
 
 } // namespace Parking

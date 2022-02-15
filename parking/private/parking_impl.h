@@ -27,7 +27,7 @@ public:
     explicit ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
                          std::unique_ptr<GateControlStrategy> gateControlStrategy,
                          Billing::BillingSystem& billingSystem,
-                         BillingInformationListener& billingInformationListener);
+                         Billing::BillingInformationListener& billingInformationListener);
 
     void tick(EventProducer& eventProducer) override;
 
@@ -44,7 +44,7 @@ private:
     unsigned int _tickNumber = 0;
     std::unique_ptr<GateControlStrategy> _gateControlStrategy;
     Billing::BillingSystem& _billingSystem;
-    BillingInformationListener& _billingListener;
+    Billing::BillingInformationListener& _billingListener;
 };
 
 } // namespace Parking

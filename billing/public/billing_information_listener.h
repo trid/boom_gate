@@ -7,13 +7,13 @@
 
 #include <string>
 
-namespace Parking {
+namespace Billing {
 
 class BillingInformationListener {
 public:
     virtual void billedFor(size_t gateId, unsigned int amount) = 0;
 };
 
-} // namespace Parking
+} // namespace Billing
 
 #endif //BOOM_GATE_APPLICATION_BILLING_INFORMATION_LISTENER_H

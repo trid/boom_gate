@@ -10,7 +10,7 @@ namespace Parking {
 
 PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
                                                        std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                       BillingInformationListener& billingListener,
+                                                       Billing::BillingInformationListener& billingListener,
                                                        Gates::GatesController& gateController) : _carsRegistry(
         carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener), _gateController(gateController) {}
 

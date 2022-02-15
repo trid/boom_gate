@@ -11,7 +11,7 @@ namespace Parking {
 ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
                          std::unique_ptr<GateControlStrategy> gateControlStrategy,
                          Billing::BillingSystem& billingSystem,
-                         BillingInformationListener& billingInformationListener) : _paymentSystem(
+                         Billing::BillingInformationListener& billingInformationListener) : _paymentSystem(
         std::move(paymentSystem)),
         _gateControlStrategy(std::move(gateControlStrategy)),
         _billingSystem(billingSystem),

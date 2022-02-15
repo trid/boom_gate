@@ -12,6 +12,7 @@
 #include "../public/gate_control_strategy.h"
 
 namespace Billing {
+class BillingInformationListener;
 class BillingSystem;
 } // namespace Billing
 
@@ -21,13 +22,11 @@ class GatesController;
 
 namespace Parking {
 
-class BillingInformationListener;
-
 class PayOnGateStrategy : public GateControlStrategy {
 public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                       std::unordered_map<std::string, unsigned int>& carsRegistry,
-                      BillingInformationListener& billingListener, Gates::GatesController& gateController);
+                      Billing::BillingInformationListener& billingListener, Gates::GatesController& gateController);
 
     void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
@@ -38,7 +37,7 @@ private:
     std::unordered_map<std::string, unsigned int> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
-    BillingInformationListener& _billingListener;
+    Billing::BillingInformationListener& _billingListener;
 
     Gates::GatesController& _gateController;
 };
