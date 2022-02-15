@@ -12,7 +12,11 @@
 
 namespace Billing {
 class BillingSystem;
-}
+} // namespace Billing
+
+namespace Gates {
+class GatesController;
+} // namespace Gates
 
 namespace Parking {
 
@@ -24,7 +28,12 @@ class GateControlStrategyFactory {
 public:
     static std::unique_ptr<GateControlStrategy> createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                 std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                BillingInformationListener& billingListener);
+                                                                BillingInformationListener& billingListener,
+                                                                Gates::GatesController& gatesController);
+    static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(Billing::BillingSystem& billingSystem,
+                                                                std::unordered_map<std::string, unsigned int>& carsRegistry,
+                                                                BillingInformationListener& billingListener,
+                                                                Gates::GatesController& gatesController);
 };
 
 } // namespace Parking

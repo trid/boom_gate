@@ -19,7 +19,6 @@ namespace Parking {
 class Parking {
 public:
     virtual void tick(EventProducer& eventProducer) = 0;
-    virtual void addGate(std::unique_ptr<Gates::Gate> gate) = 0;
 };
 
 } // namespace Parking

@@ -17,10 +17,6 @@ ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
         _billingSystem(billingSystem),
         _billingListener(billingInformationListener) {}
 
-void ParkingImpl::addGate(GateUPtr gate) {
-    _gateControlStrategy->addGate(std::move(gate));
-}
-
 void ParkingImpl::tick(EventProducer& eventProducer) {
     while (eventProducer.hasEvents()) {
         auto event = eventProducer.poll();

@@ -13,4 +13,4 @@ add_library(parking private/parking_impl.cpp
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(Parking_Tests_run tests/parking_impl_test_suite.cpp)
-target_link_libraries(Parking_Tests_run parking gtest gtest_main gmock gmock_main)
+target_link_libraries(Parking_Tests_run parking gates gtest gtest_main gmock gmock_main)

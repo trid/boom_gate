@@ -29,8 +29,6 @@ public:
                          Billing::BillingSystem& billingSystem,
                          BillingInformationListener& billingInformationListener);
 
-    void addGate(GateUPtr gate) override;
-
     void tick(EventProducer& eventProducer) override;
 
 private:

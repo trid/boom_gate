@@ -12,6 +12,8 @@
 #include "../payments/public/payment_system_factory.h"
 #include "../gates/public/gate.h"
 #include "../gates/public/gate_factory.h"
+#include "../gates/public/gates_controller.h"
+#include "../gates/public/gates_controller_factory.h"
 
 #include "private/random_events_producer.h"
 
@@ -21,12 +23,15 @@ int main(int, char**) {
     std::unordered_map<std::string, unsigned int> carsRegistry;
     auto paymentSystem = Payments::PaymentSystemFactory::create();
     auto billingSystem = Billing::BillingSystemFactory::create(carsRegistry);
-    auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(std::move(billingSystem),
-                                                                                    carsRegistry, randomEventsProducer);
-    auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy));
-    parking->addGate(Gates::GateFactory::create());
-    parking->addGate(Gates::GateFactory::create());
-    parking->addGate(Gates::GateFactory::create());
+    auto gatesController = Gates::GatesControllerFactory::create();
+    gatesController->addGate(Gates::GateFactory::create());
+    gatesController->addGate(Gates::GateFactory::create());
+    gatesController->addGate(Gates::GateFactory::create());
+    auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
+                                                                                    carsRegistry, randomEventsProducer,
+                                                                                    *gatesController);
+    auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy),
+                                                   *billingSystem, randomEventsProducer);
 
     while (true) {
         parking->tick(randomEventsProducer);

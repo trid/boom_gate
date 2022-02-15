@@ -13,7 +13,11 @@
 
 namespace Billing {
 class BillingSystem;
-}
+} // namespace Billing
+
+namespace Gates {
+class GatesController;
+} // namespace Gates
 
 namespace Parking {
 
@@ -23,26 +27,20 @@ class PayOnGateStrategy : public GateControlStrategy {
 public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                       std::unordered_map<std::string, unsigned int>& carsRegistry,
-                      BillingInformationListener& billingListener);
+                      BillingInformationListener& billingListener, Gates::GatesController& gateController);
 
     void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
     void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
-    void addGate(std::unique_ptr<Gates::Gate> gate) override;
 
 private:
-    using GateUPtr = std::unique_ptr<Gates::Gate>;
-
-private:
-    bool checkGateValid(std::size_t gateId);
-    void releaseGate(size_t gateId);
-
-    std::vector<GateUPtr> _gates;
     std::unordered_map<std::string, unsigned int>& _carsRegistry;
     std::unordered_map<std::string, unsigned int> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
     BillingInformationListener& _billingListener;
+
+    Gates::GatesController& _gateController;
 };
 
 } // namespace Parking

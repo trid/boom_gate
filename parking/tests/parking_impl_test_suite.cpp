@@ -8,6 +8,8 @@
 #include "../public/gate_control_strategy_factory.h"
 #include "../private/parking_impl.h"
 #include "../../gates/public/gate.h"
+#include "../../gates/public/gates_controller.h"
+#include "../../gates/public/gates_controller_factory.h"
 
 namespace Parking::Test {
 
@@ -34,12 +36,12 @@ public:
                 (override));
 };
 
-class BillingSystemMock: public Billing::BillingSystem {
+class BillingSystemMock : public Billing::BillingSystem {
 public:
     MOCK_METHOD(unsigned int, getBill, (const std::string&, unsigned int), (override));
 };
 
-class BillingListenerMock: public BillingInformationListener {
+class BillingListenerMock : public BillingInformationListener {
 public:
     BillingListenerMock() {
         ON_CALL(*this, billedFor).WillByDefault(
@@ -79,10 +81,13 @@ TEST(ParkingImplTestSuite, carEnters) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    auto gateController = Gates::GatesControllerFactory::create();
+    gateController->addGate(std::move(gate));
+
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry, billingListenerMock),
+                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
+                                                                    billingListenerMock,  *gateController),
                         *billingSystem, billingListenerMock};
-    parking.addGate(std::move(gate));
 
     parking.tick(eventProducer);
 }
@@ -101,10 +106,13 @@ TEST(ParkingImplTestSuite, carLeaves) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    auto gateController = Gates::GatesControllerFactory::create();
+    gateController->addGate(std::move(gate));
+
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry, billingListenerMock),
+                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
+                                                                    billingListenerMock,  *gateController),
                         *billingSystem, billingListenerMock};
-    parking.addGate(std::move(gate));
 
     parking.tick(eventProducer);
 }
@@ -113,7 +121,7 @@ TEST(ParkingImplTestSuite, payedInCash) {
     EventProducerMock eventProducer;
     EXPECT_CALL(eventProducer, hasEvents).WillOnce(Return(true)).WillOnce(Return(false));
     EXPECT_CALL(eventProducer, poll).WillOnce(
-            Return(Event{EventType::Payment, PaymentData{Payments::PaymentType::Cash, 0, 200}}));
+            Return(Event{EventType::Payment, PaymentData{Payments::PaymentType::Cash, "ab123c", 200}}));
 
     auto gate = std::make_unique<GateMock>();
     EXPECT_CALL(*gate, open).WillOnce(Return());
@@ -126,10 +134,13 @@ TEST(ParkingImplTestSuite, payedInCash) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    auto gateController = Gates::GatesControllerFactory::create();
+    gateController->addGate(std::move(gate));
+
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry, billingListenerMock),
+                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
+                                                                    billingListenerMock,  *gateController),
                         *billingSystem, billingListenerMock};
-    parking.addGate(std::move(gate));
 
     parking.tick(eventProducer);
 }
@@ -152,10 +163,13 @@ TEST(ParkingImplTestSuite, payedWithCard) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    auto gateController = Gates::GatesControllerFactory::create();
+    gateController->addGate(std::move(gate));
+
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry, billingListenerMock),
+                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
+                                                                    billingListenerMock,  *gateController),
                         *billingSystem, billingListenerMock};
-    parking.addGate(std::move(gate));
 
     parking.tick(eventProducer);
 }
@@ -180,12 +194,14 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
     EXPECT_CALL(billingListener, billedFor);
 
     std::unordered_map<std::string, unsigned int> carsRegistry;
-    BillingListenerMock billingListenerMock;
+
+    auto gateController = Gates::GatesControllerFactory::create();
+    gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry, billingListenerMock),
-                        *billingSystem, billingListenerMock};
-    parking.addGate(std::move(gate));
+                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
+                                                                    billingListener,  *gateController),
+                        *billingSystem, billingListener};
 
     parking.tick(eventProducer);
 

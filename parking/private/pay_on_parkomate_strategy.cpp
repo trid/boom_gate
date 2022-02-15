@@ -4,14 +4,15 @@
 
 #include "pay_on_parkomate_strategy.h"
 
-#include "../../gates/public/gate.h"
+#include "../../gates/public/gates_controller.h"
 
 namespace Parking {
 
-PayOnParkomateStrategy::PayOnParkomateStrategy(std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                               Billing::BillingSystem& billingSystem,
-                                               BillingInformationListener& billingListener) : _carsRegistry(
-        carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener) {}
+PayOnParkomateStrategy::PayOnParkomateStrategy(Billing::BillingSystem& billingSystem,
+                                               std::unordered_map<std::string, unsigned int>& carsRegistry,
+                                               BillingInformationListener& billingListener,
+                                               Gates::GatesController& gateController) : _carsRegistry(
+        carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener), _gateController(gateController) {}
 
 void PayOnParkomateStrategy::onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) {
     _carsRegistry[carId] = tickId;
@@ -21,8 +22,7 @@ void PayOnParkomateStrategy::onCarLeaving(std::size_t gateId, const std::string&
     auto carIter = _payedCars.find(carId);
     if (carIter != _payedCars.end()) {
         _payedCars.erase(carIter);
-        checkGateValid(gateId);
-        releaseGate(gateId);
+        _gateController.releaseGate(gateId);
     }
 }
 
@@ -34,20 +34,4 @@ void PayOnParkomateStrategy::onPayment(const std::string& carId, Payments::Payme
     _payedCars.insert(carId);
 }
 
-void PayOnParkomateStrategy::addGate(std::unique_ptr<Gates::Gate> gate) {
-    _gates.push_back(std::move(gate));
-}
-
-void PayOnParkomateStrategy::checkGateValid(size_t gateId) {
-    if (gateId >= _gates.size()) {
-        // TODO Log error here
-    }
-}
-
-void PayOnParkomateStrategy::releaseGate(size_t gateId) {
-    std::unique_ptr<Gates::Gate>& gate = _gates[gateId];
-    gate->open();
-    // TODO wait for car to drive through
-    gate->close();
-}
 } // namespace Parking

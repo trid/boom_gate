@@ -7,29 +7,28 @@
 #include "../public/billing_information_listener.h"
 
 #include "../../billing/public/billing_system.h"
-#include "../../gates/public/gate.h"
+#include "../../gates/public/gates_controller.h"
 
 namespace Parking {
 
 PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                     BillingInformationListener& billingListener) : _carsRegistry(
-        carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener) {}
+                                     BillingInformationListener& billingListener,
+                                     Gates::GatesController& gateController) :
+        _carsRegistry(carsRegistry),
+        _billingSystem(billingSystem),
+        _billingListener(billingListener),
+        _gateController(gateController) {}
 
 void PayOnGateStrategy::onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) {
-    checkGateValid(gateId);
-
     _carsRegistry[carId] = tickId;
 
-    releaseGate(gateId);
+    _gateController.releaseGate(gateId);
 }
 
 void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) {
-    checkGateValid(gateId);
-
-    std::unique_ptr<Gates::Gate>& gate = _gates[gateId];
     // Ensure gate is closed
-    gate->close();
+    _gateController.closeGate(gateId);
 
     _carToGateId[carId] = gateId;
     auto billingAmount = _billingSystem.getBill(carId, tickId);
@@ -45,26 +44,7 @@ void PayOnGateStrategy::onPayment(const std::string& carId, Payments::PaymentRes
     auto gateId = _carToGateId[carId];
     _carsRegistry.erase(carId);
     _carToGateId.erase(carId);
-    releaseGate(gateId);
-}
-
-void PayOnGateStrategy::addGate(std::unique_ptr<Gates::Gate> gate) {
-    _gates.push_back(std::move(gate));
-}
-
-bool PayOnGateStrategy::checkGateValid(std::size_t gateId) {
-    if (gateId >= _gates.size()) {
-        // TODO Log error here
-        return false;
-    }
-    return true;
-}
-
-void PayOnGateStrategy::releaseGate(size_t gateId) {
-    std::unique_ptr<Gates::Gate>& gate = _gates[gateId];
-    gate->open();
-    // TODO wait for car to drive through
-    gate->close();
+    _gateController.releaseGate(gateId);
 }
 
 } // namespace Parking
