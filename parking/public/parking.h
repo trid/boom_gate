@@ -18,6 +18,8 @@ namespace Parking {
 
 class Parking {
 public:
+    virtual ~Parking() = default;
+
     virtual void tick(EventProducer& eventProducer) = 0;
 };
 
