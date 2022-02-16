@@ -20,15 +20,15 @@
 int main(int, char**) {
     App::RandomEventsProducer randomEventsProducer(3);
 
-    std::unordered_map<std::string, unsigned int> carsRegistry;
+    std::unordered_map<std::string, unsigned int> carEnteredTime;
     auto paymentSystem = Payments::PaymentSystemFactory::create();
-    auto billingSystem = Billing::BillingSystemFactory::create(carsRegistry);
+    auto billingSystem = Billing::BillingSystemFactory::create(carEnteredTime);
     auto gatesController = Gates::GatesControllerFactory::create();
     gatesController->addGate(Gates::GateFactory::create());
     gatesController->addGate(Gates::GateFactory::create());
     gatesController->addGate(Gates::GateFactory::create());
     auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
-                                                                                    carsRegistry, randomEventsProducer,
+                                                                                    carEnteredTime, randomEventsProducer,
                                                                                     *gatesController);
     auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy),
                                                    *billingSystem, randomEventsProducer);

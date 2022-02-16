@@ -11,6 +11,8 @@ namespace Billing {
 
 class BillingInformationListener {
 public:
+    virtual ~BillingInformationListener() = default;
+
     virtual void billedFor(size_t gateId, unsigned int amount) = 0;
 };
 
