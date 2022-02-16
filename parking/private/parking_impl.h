@@ -32,13 +32,13 @@ public:
     void tick(EventProducer& eventProducer) override;
 
 private:
-    void carEnters(CarEnterData& data);
-    void carLeaves(CarLeaveData& data);
+    void carEnters(const CarEnterData& data);
+    void carLeaves(const CarLeaveData& data);
 
     void payed(const PaymentData& data);
 
     void onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result);
-    void requestBilling(RequestBillingData& data);
+    void requestBilling(const RequestBillingData& data);
 
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
     unsigned int _tickNumber = 0;

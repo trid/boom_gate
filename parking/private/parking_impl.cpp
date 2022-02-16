@@ -40,11 +40,11 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
     ++_tickNumber;
 }
 
-void ParkingImpl::carEnters(CarEnterData& data) {
+void ParkingImpl::carEnters(const CarEnterData& data) {
     _gateControlStrategy->onCarEntering(data.gateId, data.carId, _tickNumber);
 }
 
-void ParkingImpl::carLeaves(CarLeaveData& data) {
+void ParkingImpl::carLeaves(const CarLeaveData& data) {
     _gateControlStrategy->onCarLeaving(data.gateId, data.carId, _tickNumber);
 }
 
@@ -58,7 +58,7 @@ void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::Payme
     _gateControlStrategy->onPayment(carId, result);
 }
 
-void ParkingImpl::requestBilling(RequestBillingData& data) {
+void ParkingImpl::requestBilling(const RequestBillingData& data) {
     _billingListener.billedFor(0, _billingSystem.getBill(data.carId, _tickNumber));
 }
 
