@@ -14,8 +14,6 @@
 #include "../payments/public/payment_system_factory.h"
 #include "../gates/public/gate.h"
 #include "../gates/public/gate_factory.h"
-#include "../gates/public/gates_controller.h"
-#include "../gates/public/gates_controller_factory.h"
 
 class BillingInformationListenerStub : public Billing::BillingInformationListener {
 public:
@@ -31,15 +29,14 @@ int main(int, char**) {
     auto paymentSystem = Payments::PaymentSystemFactory::create();
     auto carRegistry = Parking::CarRegistryFactory::create(timer);
     auto billingSystem = Billing::BillingSystemFactory::create(timer, *carRegistry);
-    auto gatesController = Gates::GatesControllerFactory::create();
-    gatesController->addGate(Gates::GateFactory::create());
-    gatesController->addGate(Gates::GateFactory::create());
-    gatesController->addGate(Gates::GateFactory::create());
+
     BillingInformationListenerStub billingInformationListenerStub;
     auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
                                                                                     *carRegistry,
-                                                                                    billingInformationListenerStub,
-                                                                                    *gatesController);
+                                                                                    billingInformationListenerStub);
+    gateControlStrategy->addGate(Gates::GateFactory::create());
+    gateControlStrategy->addGate(Gates::GateFactory::create());
+    gateControlStrategy->addGate(Gates::GateFactory::create());
     auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy),
                                                    *billingSystem, billingInformationListenerStub);
 

@@ -32,10 +32,8 @@ class GateControlStrategyFactory {
 public:
     static std::unique_ptr<GateControlStrategy>
     createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                    Billing::BillingInformationListener& billingListener,
-                    Gates::GatesController& gatesController);
-    static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(CarRegistry& carsRegistry,
-                                                                         Gates::GatesController& gatesController);
+                    Billing::BillingInformationListener& billingListener);
+    static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(CarRegistry& carsRegistry);
 };
 
 } // namespace Parking

@@ -4,13 +4,10 @@ project(gate_library)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(gates private/print_gate.cpp
-        private/gate_factory.cpp
-        private/default_gate_controller.cpp
-        private/gates_controller_factory.cpp)
+        private/gate_factory.cpp)
 
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_executable(Gates_Tests_run tests/print_gate_test_suite.cpp
-        tests/default_gate_controller_test_suite.cpp)
+add_executable(Gates_Tests_run tests/print_gate_test_suite.cpp)
 target_link_libraries(Gates_Tests_run gates gtest gtest_main gmock gmock_main)

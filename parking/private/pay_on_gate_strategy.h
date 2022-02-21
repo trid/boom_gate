@@ -12,6 +12,7 @@
 #include "../public/gate_control_strategy.h"
 #include "../../shared/public/timer.h"
 #include "../public/car_registry.h"
+#include "gate_controller_base.h"
 
 namespace Billing {
 class BillingInformationListener;
@@ -24,15 +25,16 @@ class GatesController;
 
 namespace Parking {
 
-class PayOnGateStrategy : public GateControlStrategy {
+class PayOnGateStrategy : public GateControlStrategy, private GateControllerBase {
 public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                      Billing::BillingInformationListener& billingListener,
-                      Gates::GatesController& gateController);
+                      Billing::BillingInformationListener& billingListener);
 
     void onCarEntering(std::size_t gateId, const std::string& carId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId) override;
     void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
+
+    void addGate(Gates::GateUPtr gate) override;
 
 private:
     CarRegistry& _carsRegistry;
@@ -40,8 +42,6 @@ private:
 
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;
-
-    Gates::GatesController& _gateController;
 };
 
 } // namespace Parking

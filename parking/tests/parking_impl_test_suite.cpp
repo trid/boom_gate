@@ -11,8 +11,6 @@
 #include "../public/gate_control_strategy_factory.h"
 #include "../private/parking_impl.h"
 #include "../../gates/public/gate.h"
-#include "../../gates/public/gates_controller.h"
-#include "../../gates/public/gates_controller_factory.h"
 #include "../../shared/public/timer.h"
 
 namespace Parking::Test {
@@ -75,14 +73,15 @@ TEST(ParkingImplTestSuite, carEnters) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
-    auto gateController = Gates::GatesControllerFactory::create();
-    gateController->addGate(std::move(gate));
-
     TimerMock timer;
 
+    std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
+            *billingSystem, carsRegistry,
+            billingListenerMock);
+    gateController->addGate(std::move(gate));
+
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock, *gateController),
+                        std::move(gateController),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -102,14 +101,13 @@ TEST(ParkingImplTestSuite, carLeaves) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
-    auto gateController = Gates::GatesControllerFactory::create();
+    std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
+            *billingSystem, carsRegistry,
+            billingListenerMock);
     gateController->addGate(std::move(gate));
 
-    TimerMock timerMock;
-
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock, *gateController),
+                        std::move(gateController),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -132,14 +130,13 @@ TEST(ParkingImplTestSuite, payedInCash) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
-    auto gateController = Gates::GatesControllerFactory::create();
+    std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
+            *billingSystem, carsRegistry,
+            billingListenerMock);
     gateController->addGate(std::move(gate));
 
-    TimerMock timerMock;
-
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock, *gateController),
+                        std::move(gateController),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -163,14 +160,13 @@ TEST(ParkingImplTestSuite, payedWithCard) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
-    auto gateController = Gates::GatesControllerFactory::create();
+    std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
+            *billingSystem, carsRegistry,
+            billingListenerMock);
     gateController->addGate(std::move(gate));
 
-    TimerMock timerMock;
-
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock, *gateController),
+                        std::move(gateController),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -197,14 +193,13 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
 
     CarRegistryMock carsRegistry;
 
-    auto gateController = Gates::GatesControllerFactory::create();
+    std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
+            *billingSystem, carsRegistry,
+            billingListener);
     gateController->addGate(std::move(gate));
 
-    TimerMock timerMock;
-
     ParkingImpl parking{std::move(paymentSystem),
-                        GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListener, *gateController),
+                        std::move(gateController),
                         *billingSystem, billingListener};
 
     parking.tick(eventProducer);

@@ -7,23 +7,20 @@
 #include "../private/pay_on_gate_strategy.h"
 #include "../private/pay_on_ticket_machine_strategy.h"
 
-#include "../../billing/public/billing_system.h"
-#include "../../gates/public/gates_controller.h"
+#include "../../gates/public/gate.h"
 
 namespace Parking {
 
 // static
 std::unique_ptr<GateControlStrategy>
 GateControlStrategyFactory::createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                                            Billing::BillingInformationListener& billingListener,
-                                            Gates::GatesController& gatesController) {
-    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener, gatesController);
+                                            Billing::BillingInformationListener& billingListener) {
+    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener);
 }
 
 std::unique_ptr<GateControlStrategy>
-GateControlStrategyFactory::createPayOnTicketMachine(CarRegistry& carsRegistry,
-                                                     Gates::GatesController& gatesController) {
-    return std::make_unique<PayOnTicketMachineStrategy>(carsRegistry, gatesController);
+GateControlStrategyFactory::createPayOnTicketMachine(CarRegistry& carsRegistry) {
+    return std::make_unique<PayOnTicketMachineStrategy>(carsRegistry);
 }
 
 } // namespace Parking

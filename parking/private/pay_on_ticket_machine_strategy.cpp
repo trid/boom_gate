@@ -4,28 +4,27 @@
 
 #include "pay_on_ticket_machine_strategy.h"
 
-#include "../../gates/public/gates_controller.h"
+#include "../../gates/public/gate.h"
+
 
 namespace Parking {
 
-PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(CarRegistry& carsRegistry,
-                                                       Gates::GatesController& gateController)
-                                                       : _carsRegistry(carsRegistry),
-                                                       _gateController(gateController) {}
+PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(CarRegistry& carsRegistry)
+                                                       : _carsRegistry(carsRegistry) {}
 
 void PayOnTicketMachineStrategy::onCarEntering(std::size_t gateId, const std::string& carId) {
     _carsRegistry.addCar(carId);
-    _gateController.releaseGate(gateId);
+    GateControllerBase::releaseGate(gateId);
 }
 
 void PayOnTicketMachineStrategy::onCarLeaving(std::size_t gateId, const std::string& carId) {
     auto carIter = _payedCars.find(carId);
     if (carIter != _payedCars.end()) {
         _payedCars.erase(carIter);
-        _gateController.releaseGate(gateId);
+        GateControllerBase::releaseGate(gateId);
     } else {
         // Ensure gate is closed
-        _gateController.closeGate(gateId);
+        GateControllerBase::closeGate(gateId);
     }
 }
 
@@ -35,6 +34,10 @@ void PayOnTicketMachineStrategy::onPayment(const std::string& carId, Payments::P
         return;
     }
     _payedCars.insert(carId);
+}
+
+void PayOnTicketMachineStrategy::addGate(Gates::GateUPtr gate) {
+    GateControllerBase::addGate(std::move(gate));
 }
 
 } // namespace Parking
