@@ -15,11 +15,15 @@
 #include "../gates/public/gates_controller.h"
 #include "../gates/public/gates_controller_factory.h"
 
-#include "private/random_events_producer.h"
+class BillingInformationListenerStub : public Billing::BillingInformationListener {
+public:
+    void billedFor(size_t gateId, unsigned int amount) override {
+
+    }
+};
+
 
 int main(int, char**) {
-    App::RandomEventsProducer randomEventsProducer(3);
-
     std::unordered_map<std::string, unsigned int> carEnteredTime;
     auto paymentSystem = Payments::PaymentSystemFactory::create();
     auto billingSystem = Billing::BillingSystemFactory::create(carEnteredTime);
@@ -27,15 +31,13 @@ int main(int, char**) {
     gatesController->addGate(Gates::GateFactory::create());
     gatesController->addGate(Gates::GateFactory::create());
     gatesController->addGate(Gates::GateFactory::create());
+    BillingInformationListenerStub billingInformationListenerStub;
     auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
-                                                                                    carEnteredTime, randomEventsProducer,
+                                                                                    carEnteredTime,
+                                                                                    billingInformationListenerStub,
                                                                                     *gatesController);
     auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy),
-                                                   *billingSystem, randomEventsProducer);
-
-    while (true) {
-        parking->tick(randomEventsProducer);
-    }
+                                                   *billingSystem, billingInformationListenerStub);
 
     return 0;
 }
