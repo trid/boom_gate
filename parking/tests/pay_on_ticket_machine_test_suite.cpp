@@ -46,7 +46,7 @@ TEST(PayOnTicketMachineStrategyTestSuite, carEnteredStoppedLeaving) {
     EXPECT_CALL(gateControllerMock, closeGate);
     EXPECT_CALL(gateControllerMock, releaseGate);
     EXPECT_CALL(billingSystemMock, getBill).Times(0);
-    EXPECT_CALL(billingListenerMock, billedFor).Times(0);
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced).Times(0);
 
     PayOnTicketMachineStrategy strategy{carsRegistry, gateControllerMock};
     strategy.onCarEntering(0, "ab123c");
@@ -62,7 +62,7 @@ TEST(PayOnTicketMachineStrategyTestSuite, carPayedCanLeave) {
     EXPECT_CALL(gateControllerMock, closeGate).Times(0);
     EXPECT_CALL(gateControllerMock, releaseGate).Times(2);
     EXPECT_CALL(billingSystemMock, getBill).Times(0);
-    EXPECT_CALL(billingListenerMock, billedFor).Times(0);
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced).Times(0);
 
     PayOnTicketMachineStrategy strategy{carsRegistry, gateControllerMock};
     strategy.onCarEntering(0, "ab123c");

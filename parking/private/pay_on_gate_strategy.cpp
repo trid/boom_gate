@@ -32,7 +32,7 @@ void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carI
 
     _carToGateId[carId] = gateId;
     auto billingAmount = _billingSystem.getBill(carId);
-    _billingListener.billedFor(gateId, billingAmount);
+    _billingListener.onBillingInformationProduced(carId, billingAmount);
 }
 
 void PayOnGateStrategy::onPayment(const std::string& carId, Payments::PaymentResult paymentResult) {

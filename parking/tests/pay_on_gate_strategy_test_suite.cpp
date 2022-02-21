@@ -47,7 +47,7 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     EXPECT_CALL(gateControllerMock, closeGate);
     EXPECT_CALL(gateControllerMock, releaseGate);
     EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
-    EXPECT_CALL(billingListenerMock, billedFor);
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
     PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};
@@ -67,7 +67,7 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     EXPECT_CALL(gateControllerMock, closeGate);
     EXPECT_CALL(gateControllerMock, releaseGate).Times(2);
     EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
-    EXPECT_CALL(billingListenerMock, billedFor);
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
     PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};

@@ -56,7 +56,7 @@ void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::Payme
 }
 
 void ParkingImpl::requestBilling(const RequestBillingData& data) {
-    _billingListener.billedFor(0, _billingSystem.getBill(data.carId));
+    _billingListener.onBillingInformationProduced(0, _billingSystem.getBill(data.carId));
 }
 
 } // namespace Parking

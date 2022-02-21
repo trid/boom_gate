@@ -19,7 +19,7 @@
 
 class BillingInformationListenerStub : public Billing::BillingInformationListener {
 public:
-    void billedFor(size_t gateId, unsigned int amount) override {
+    void onBillingInformationProduced(const std::string& accountId, unsigned int amount) override {
 
     }
 };

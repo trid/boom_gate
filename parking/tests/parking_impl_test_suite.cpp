@@ -193,7 +193,7 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
     EXPECT_CALL(*billingSystem, getBill).WillOnce(Return(100));
 
     auto billingListener = BillingListenerMock();
-    EXPECT_CALL(billingListener, billedFor);
+    EXPECT_CALL(billingListener, onBillingInformationProduced);
 
     CarRegistryMock carsRegistry;
 

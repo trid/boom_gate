@@ -18,8 +18,8 @@ public:
 class BillingListenerMock : public Billing::BillingInformationListener {
 public:
     BillingListenerMock() {
-        ON_CALL(*this, billedFor).WillByDefault(
-                [this](size_t, unsigned int amount) {
+        ON_CALL(*this, onBillingInformationProduced).WillByDefault(
+                [this](const std::string&, unsigned int amount) {
                     _billedAmount = amount;
                 });
     }
@@ -28,7 +28,7 @@ public:
         return _billedAmount;
     }
 
-    MOCK_METHOD(void, billedFor, (size_t, unsigned int), (override));
+    MOCK_METHOD(void, onBillingInformationProduced, (const std::string&, unsigned int), (override));
 private:
     unsigned int _billedAmount = 0;
 };
