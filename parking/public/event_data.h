@@ -14,20 +14,26 @@ namespace Parking {
 
 struct CarEnterData {
     std::size_t gateId;
+    std::string carId;
 };
 
 struct CarLeaveData {
     std::size_t gateId;
+    std::string carId;
 };
 
 struct PaymentData {
     Payments::PaymentType paymentType;
-    std::size_t gateId;
+    std::string carId;
     unsigned int amount;
     std::string cardId;
 };
 
-using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData>;
+struct RequestBillingData {
+    std::string carId;
+};
+
+using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData, RequestBillingData>;
 
 } // namespace Parking
 

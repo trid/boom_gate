@@ -6,15 +6,20 @@
 
 #include "cash_payement_provider.h"
 #include "card_payment_provider.h"
+#include "subscription_card_payment_provider.h"
 
 namespace Payments {
 
 Payments::SimplePaymentSystem::SimplePaymentSystem(std::unique_ptr<CashPaymentProvider> cashPaymentProvider,
-                                                   std::unique_ptr<CardPaymentProvider> cardPaymentProvider)
-        : _cashPaymentProvider(std::move(cashPaymentProvider)), _cardPaymentProvider(std::move(cardPaymentProvider)) {}
+                                                   std::unique_ptr<CardPaymentProvider> cardPaymentProvider,
+                                                   std::unique_ptr<SubscriptionCardPaymentProvider> subscriptionCardPaymentProvider)
+        : _cashPaymentProvider(std::move(cashPaymentProvider)),
+        _cardPaymentProvider(std::move(cardPaymentProvider)),
+        _subscriptionCardPaymentProvider(std::move(subscriptionCardPaymentProvider)) {}
 
 
-void Payments::SimplePaymentSystem::pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData, Payments::PaymentCallback callback) {
+void Payments::SimplePaymentSystem::pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData,
+                                        PaymentCallback callback) {
     switch (paymentType) {
         case Cash:
             _cashPaymentProvider->pay(amount, callback);
@@ -23,8 +28,7 @@ void Payments::SimplePaymentSystem::pay(unsigned int amount, PaymentType payment
             _cardPaymentProvider->pay(amount, paymentData, callback);
             break;
         case SubscriptionCard:
-            // TODO: Integrate subscriptions here
-            callback(PaymentResult::Error);
+            _subscriptionCardPaymentProvider->pay(paymentData, callback);
             break;
     }
 }

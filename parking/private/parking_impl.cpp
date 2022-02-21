@@ -4,14 +4,18 @@
 
 #include "parking_impl.h"
 
+#include "../../gates/public/gate.h"
+
 namespace Parking {
 
-ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem) : _paymentSystem(
-        std::move(paymentSystem)) {}
-
-void ParkingImpl::addGate(ParkingImpl::GateUPtr gate) {
-    _gates.push_back(std::move(gate));
-}
+ParkingImpl::ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
+                         std::unique_ptr<GateControlStrategy> gateControlStrategy,
+                         Billing::BillingSystem& billingSystem,
+                         Billing::BillingInformationListener& billingInformationListener) : _paymentSystem(
+        std::move(paymentSystem)),
+        _gateControlStrategy(std::move(gateControlStrategy)),
+        _billingSystem(billingSystem),
+        _billingListener(billingInformationListener) {}
 
 void ParkingImpl::tick(EventProducer& eventProducer) {
     while (eventProducer.hasEvents()) {
@@ -26,52 +30,36 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
             case EventType::Payment:
                 payed(std::get<PaymentData>(event.eventData));
                 break;
+            case EventType::RequestBilling:
+                requestBilling(std::get<RequestBillingData>(event.eventData));
+                break;
         }
     }
+
+    // TODO: Make tick counter an external dependency
+    ++_tickNumber;
 }
 
-void ParkingImpl::carEnters(CarEnterData& data) {
-    checkGateValid(data.gateId);
-
-    releaseGate(data.gateId);
+void ParkingImpl::carEnters(const CarEnterData& data) {
+    _gateControlStrategy->onCarEntering(data.gateId, data.carId, _tickNumber);
 }
 
-void ParkingImpl::carLeaves(CarLeaveData& data) {
-    checkGateValid(data.gateId);
-
-    std::unique_ptr<Gates::Gate>& gate = _gates[data.gateId];
-    // Ensure gate is closed
-    gate->close();
-    // TODO Print billing information somehow
-}
-
-bool ParkingImpl::checkGateValid(const std::size_t gateId) const {
-    if (gateId >= _gates.size()) {
-        // TODO Log error here
-        return false;
-    }
-    return true;
-}
-
-void ParkingImpl::releaseGate(const size_t gateId) {
-    std::unique_ptr<Gates::Gate>& gate = _gates[gateId];
-    gate->open();
-    // TODO wait for car to drive through
-    gate->close();
+void ParkingImpl::carLeaves(const CarLeaveData& data) {
+    _gateControlStrategy->onCarLeaving(data.gateId, data.carId, _tickNumber);
 }
 
 void ParkingImpl::payed(const PaymentData& data) {
-    _paymentSystem->pay(data.amount, data.paymentType, data.cardId, [this, data](Payments::PaymentResult result) {
-        onPaymentEvent(data.gateId, result);
+    _paymentSystem->pay(data.paymentType, data.amount, data.cardId, [this, data](Payments::PaymentResult result) {
+        onPaymentEvent(data.carId, result);
     });
 }
 
-void ParkingImpl::onPaymentEvent(const size_t gateId, const Payments::PaymentResult& result) {
-    if (result == Payments::Accepted) {
-        releaseGate(gateId);
-        return;
-    }
-    // TODO Log payment errors
+void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result) {
+    _gateControlStrategy->onPayment(carId, result);
+}
+
+void ParkingImpl::requestBilling(const RequestBillingData& data) {
+    _billingListener.billedFor(0, _billingSystem.getBill(data.carId, _tickNumber));
 }
 
 } // namespace Parking

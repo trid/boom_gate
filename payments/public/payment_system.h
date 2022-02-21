@@ -14,8 +14,8 @@ class PaymentSystem {
 public:
     virtual ~PaymentSystem() = default;
 
-    virtual void pay(unsigned int amount, PaymentType paymentType, const std::string& paymentData,
-                           PaymentCallback callback) = 0;
+    virtual void
+    pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData, PaymentCallback callback) = 0;
 };
 
 } // namespace Payments

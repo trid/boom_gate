@@ -8,38 +8,43 @@
 #include <memory>
 #include <vector>
 
-#include "../public/parking.h"
+#include <boost/optional.hpp>
 
-#include "../../gates/public/gate.h"
+#include "../public/parking.h"
+#include "../public/gate_control_strategy.h"
+
 #include "../../payments/public/payment_system.h"
+#include "../../billing/public/billing_system.h"
 
 namespace Parking {
 
+class GateControlStrategy;
+
+using GateUPtr = std::unique_ptr<Gates::Gate>;
+
 class ParkingImpl: public Parking {
 public:
-    using GateUPtr = std::unique_ptr<Gates::Gate>;
-
-public:
-    explicit ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem);
-
-    void addGate(GateUPtr gate) override;
+    explicit ParkingImpl(std::unique_ptr<Payments::PaymentSystem> paymentSystem,
+                         std::unique_ptr<GateControlStrategy> gateControlStrategy,
+                         Billing::BillingSystem& billingSystem,
+                         Billing::BillingInformationListener& billingInformationListener);
 
     void tick(EventProducer& eventProducer) override;
 
 private:
-    std::vector<GateUPtr> _gates;
-    std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
-
-    bool checkGateValid(std::size_t gateId) const;
-
-    void carEnters(CarEnterData& data);
-    void carLeaves(CarLeaveData& data);
-
-    void releaseGate(size_t gateId);
+    void carEnters(const CarEnterData& data);
+    void carLeaves(const CarLeaveData& data);
 
     void payed(const PaymentData& data);
 
-    void onPaymentEvent(size_t gateId, const Payments::PaymentResult& result);
+    void onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result);
+    void requestBilling(const RequestBillingData& data);
+
+    std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
+    unsigned int _tickNumber = 0;
+    std::unique_ptr<GateControlStrategy> _gateControlStrategy;
+    Billing::BillingSystem& _billingSystem;
+    Billing::BillingInformationListener& _billingListener;
 };
 
 } // namespace Parking
