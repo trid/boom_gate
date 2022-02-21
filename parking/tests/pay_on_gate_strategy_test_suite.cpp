@@ -30,12 +30,19 @@ public:
     MOCK_METHOD(unsigned int, getTicks, (), (const, override));
 };
 
+class CarRegistryMock: public Parking::CarRegistry {
+public:
+    MOCK_METHOD(void, addCar, (const std::string&), (override));
+    MOCK_METHOD(void, removeCar, (const std::string&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+};
+
 TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     GateControllerMock gateControllerMock;
     BillingSystemMock billingSystemMock;
     BillingListenerMock billingListenerMock;
     TimerMock timerMock;
-    std::unordered_map<std::string, unsigned int> carsRegistry;
+    CarRegistryMock carsRegistry;
 
     EXPECT_CALL(gateControllerMock, closeGate);
     EXPECT_CALL(gateControllerMock, releaseGate);
@@ -43,8 +50,7 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     EXPECT_CALL(billingListenerMock, billedFor);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock,
-                               timerMock};
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};
     strategy.onCarEntering(0, "ab123c");
     strategy.onCarLeaving(0, "ab123c");
 
@@ -56,7 +62,7 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     BillingSystemMock billingSystemMock;
     BillingListenerMock billingListenerMock;
     TimerMock timerMock;
-    std::unordered_map<std::string, unsigned int> carsRegistry;
+    CarRegistryMock carsRegistry;
 
     EXPECT_CALL(gateControllerMock, closeGate);
     EXPECT_CALL(gateControllerMock, releaseGate).Times(2);
@@ -64,8 +70,7 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     EXPECT_CALL(billingListenerMock, billedFor);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock,
-                               timerMock};
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};
     strategy.onCarEntering(0, "ab123c");
     strategy.onCarLeaving(0, "ab123c");
     strategy.onPayment("ab123c", Payments::PaymentResult::Accepted);

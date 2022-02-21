@@ -7,7 +7,9 @@ add_library(parking private/parking_impl.cpp
         private/parking_factory.cpp
         private/pay_on_gate_strategy.cpp
         private/pay_on_ticket_machine_strategy.cpp
-        private/gate_control_strategy_factory.cpp)
+        private/gate_control_strategy_factory.cpp
+        private/car_registry_impl.cpp
+        private/car_registry_factory.cpp)
 
 # Tests ------------------------------------------------------------
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

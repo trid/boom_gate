@@ -25,20 +25,17 @@ class Timer;
 
 namespace Parking {
 
+class CarRegistry;
 class GateControlStrategy;
 
 class GateControlStrategyFactory {
 public:
-    static std::unique_ptr<GateControlStrategy> createPayOnGate(Billing::BillingSystem& billingSystem,
-                                                                std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                Billing::BillingInformationListener& billingListener,
-                                                                Gates::GatesController& gatesController,
-                                                                const Utils::Timer& timer);
-    static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(Billing::BillingSystem& billingSystem,
-                                                                         std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                         Billing::BillingInformationListener& billingListener,
-                                                                         Gates::GatesController& gatesController,
-                                                                         const Utils::Timer& timer);
+    static std::unique_ptr<GateControlStrategy>
+    createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
+                    Billing::BillingInformationListener& billingListener,
+                    Gates::GatesController& gatesController);
+    static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(CarRegistry& carsRegistry,
+                                                                         Gates::GatesController& gatesController);
 };
 
 } // namespace Parking

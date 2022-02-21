@@ -11,6 +11,7 @@
 
 #include "../public/gate_control_strategy.h"
 #include "../../shared/public/timer.h"
+#include "../public/car_registry.h"
 
 namespace Billing {
 class BillingInformationListener;
@@ -25,25 +26,22 @@ namespace Parking {
 
 class PayOnGateStrategy : public GateControlStrategy {
 public:
-    PayOnGateStrategy(Billing::BillingSystem& billingSystem,
-                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                      Billing::BillingInformationListener& billingListener, Gates::GatesController& gateController,
-                      const Utils::Timer& timer);
+    PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
+                      Billing::BillingInformationListener& billingListener,
+                      Gates::GatesController& gateController);
 
     void onCarEntering(std::size_t gateId, const std::string& carId) override;
     void onCarLeaving(std::size_t gateId, const std::string& carId) override;
     void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
 
 private:
-    std::unordered_map<std::string, unsigned int>& _carsRegistry;
+    CarRegistry& _carsRegistry;
     std::unordered_map<std::string, unsigned int> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;
 
     Gates::GatesController& _gateController;
-
-    const Utils::Timer& _timer;
 };
 
 } // namespace Parking

@@ -13,16 +13,24 @@ public:
     MOCK_METHOD(unsigned int, getTicks, (), (const, override));
 };
 
+class CarRegistryMock: public Parking::CarRegistry {
+public:
+    MOCK_METHOD(void, addCar, (const std::string&), (override));
+    MOCK_METHOD(void, removeCar, (const std::string&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+};
+
 namespace Billing::Tests {
 
 TEST(TicksBasedBillingSystemTestSuite, billCarForSpentTime) {
-    std::unordered_map<std::string, unsigned int> registry;
     constexpr char carId[] = "ab123c";
-    registry.emplace(carId, 0);
     TimerMock timerMock;
-    EXPECT_CALL(timerMock, getTicks).WillOnce(testing::Return(5));
+    CarRegistryMock carRegistryMock;
 
-    TicksBasedBillingSystem billingSystem{timerMock, registry};
+    EXPECT_CALL(timerMock, getTicks).WillOnce(testing::Return(5));
+    EXPECT_CALL(carRegistryMock, getParkingTime).WillOnce(testing::Return(0));
+
+    TicksBasedBillingSystem billingSystem{timerMock, carRegistryMock};
     auto billedAmount = billingSystem.getBill(carId);
 
     ASSERT_EQ(50, billedAmount);

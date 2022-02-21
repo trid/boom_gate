@@ -5,23 +5,16 @@
 #include "pay_on_ticket_machine_strategy.h"
 
 #include "../../gates/public/gates_controller.h"
-#include "../../shared/public/timer.h"
 
 namespace Parking {
 
-PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
-                                                       std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                       Billing::BillingInformationListener& billingListener,
-                                                       Gates::GatesController& gateController,
-                                                       const Utils::Timer& timer)
+PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(CarRegistry& carsRegistry,
+                                                       Gates::GatesController& gateController)
                                                        : _carsRegistry(carsRegistry),
-                                                       _billingSystem(billingSystem),
-                                                       _billingListener(billingListener),
-                                                       _gateController(gateController),
-                                                       _timer(timer) {}
+                                                       _gateController(gateController) {}
 
 void PayOnTicketMachineStrategy::onCarEntering(std::size_t gateId, const std::string& carId) {
-    _carsRegistry[carId] = _timer.getTicks();
+    _carsRegistry.addCar(carId);
     _gateController.releaseGate(gateId);
 }
 
