@@ -35,17 +35,14 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
                 break;
         }
     }
-
-    // TODO: Make tick counter an external dependency
-    ++_tickNumber;
 }
 
 void ParkingImpl::carEnters(const CarEnterData& data) {
-    _gateControlStrategy->onCarEntering(data.gateId, data.carId, _tickNumber);
+    _gateControlStrategy->onCarEntering(data.gateId, data.carId);
 }
 
 void ParkingImpl::carLeaves(const CarLeaveData& data) {
-    _gateControlStrategy->onCarLeaving(data.gateId, data.carId, _tickNumber);
+    _gateControlStrategy->onCarLeaving(data.gateId, data.carId);
 }
 
 void ParkingImpl::payed(const PaymentData& data) {
@@ -59,7 +56,7 @@ void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::Payme
 }
 
 void ParkingImpl::requestBilling(const RequestBillingData& data) {
-    _billingListener.billedFor(0, _billingSystem.getBill(data.carId, _tickNumber));
+    _billingListener.billedFor(0, _billingSystem.getBill(data.carId));
 }
 
 } // namespace Parking

@@ -9,8 +9,9 @@
 namespace Billing {
 
 // static
-std::unique_ptr<BillingSystem> BillingSystemFactory::create(const std::unordered_map<std::string, unsigned int>& registry) {
-    return std::make_unique<TicksBasedBillingSystem>(registry);
+std::unique_ptr<BillingSystem>
+BillingSystemFactory::create(const Utils::Timer& timer, const std::unordered_map<std::string, unsigned int>& registry) {
+    return std::make_unique<TicksBasedBillingSystem>(timer, registry);
 }
 
 } // namespace Billing

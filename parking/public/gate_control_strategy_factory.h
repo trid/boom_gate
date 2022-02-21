@@ -19,6 +19,10 @@ namespace Gates {
 class GatesController;
 } // namespace Gates
 
+namespace Utils {
+class Timer;
+} // namespace Utils
+
 namespace Parking {
 
 class GateControlStrategy;
@@ -28,11 +32,13 @@ public:
     static std::unique_ptr<GateControlStrategy> createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                 std::unordered_map<std::string, unsigned int>& carsRegistry,
                                                                 Billing::BillingInformationListener& billingListener,
-                                                                Gates::GatesController& gatesController);
+                                                                Gates::GatesController& gatesController,
+                                                                const Utils::Timer& timer);
     static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(Billing::BillingSystem& billingSystem,
-                                                                std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                                Billing::BillingInformationListener& billingListener,
-                                                                Gates::GatesController& gatesController);
+                                                                         std::unordered_map<std::string, unsigned int>& carsRegistry,
+                                                                         Billing::BillingInformationListener& billingListener,
+                                                                         Gates::GatesController& gatesController,
+                                                                         const Utils::Timer& timer);
 };
 
 } // namespace Parking

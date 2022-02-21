@@ -2,6 +2,7 @@
 // Created by TriD on 08.02.2022.
 //
 
+#include "private/tick_timer.h"
 #include "../billing/public/billing_system_factory.h"
 #include "../billing/public/billing_system.h"
 #include "../parking/public/parking.h"
@@ -24,9 +25,10 @@ public:
 
 
 int main(int, char**) {
+    TickTimer timer;
     std::unordered_map<std::string, unsigned int> carEnteredTime;
     auto paymentSystem = Payments::PaymentSystemFactory::create();
-    auto billingSystem = Billing::BillingSystemFactory::create(carEnteredTime);
+    auto billingSystem = Billing::BillingSystemFactory::create(timer, carEnteredTime);
     auto gatesController = Gates::GatesControllerFactory::create();
     gatesController->addGate(Gates::GateFactory::create());
     gatesController->addGate(Gates::GateFactory::create());
@@ -35,7 +37,7 @@ int main(int, char**) {
     auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
                                                                                     carEnteredTime,
                                                                                     billingInformationListenerStub,
-                                                                                    *gatesController);
+                                                                                    *gatesController, timer);
     auto parking = Parking::ParkingFactory::create(std::move(paymentSystem), std::move(gateControlStrategy),
                                                    *billingSystem, billingInformationListenerStub);
 

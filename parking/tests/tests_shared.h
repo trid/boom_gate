@@ -12,7 +12,7 @@ namespace Parking::Test {
 
 class BillingSystemMock : public Billing::BillingSystem {
 public:
-    MOCK_METHOD(unsigned int, getBill, (const std::string&, unsigned int), (override));
+    MOCK_METHOD(unsigned int, getBill, (const std::string&), (override));
 };
 
 class BillingListenerMock : public Billing::BillingInformationListener {

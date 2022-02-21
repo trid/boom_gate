@@ -16,16 +16,18 @@ namespace Parking {
 std::unique_ptr<GateControlStrategy> GateControlStrategyFactory::createPayOnGate(Billing::BillingSystem& billingSystem,
                                                                                  std::unordered_map<std::string, unsigned int>& carsRegistry,
                                                                                  Billing::BillingInformationListener& billingListener,
-                                                                                 Gates::GatesController& gatesController) {
-    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener, gatesController);
+                                                                                 Gates::GatesController& gatesController,
+                                                                                 const Utils::Timer& timer) {
+    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener, gatesController, timer);
 }
 
 std::unique_ptr<GateControlStrategy>
 GateControlStrategyFactory::createPayOnTicketMachine(Billing::BillingSystem& billingSystem,
                                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
                                                      Billing::BillingInformationListener& billingListener,
-                                                     Gates::GatesController& gatesController) {
-    return std::make_unique<PayOnTicketMachineStrategy>(billingSystem, carsRegistry, billingListener, gatesController);
+                                                     Gates::GatesController& gatesController,
+                                                     const Utils::Timer& timer) {
+    return std::make_unique<PayOnTicketMachineStrategy>(billingSystem, carsRegistry, billingListener, gatesController, timer);
 }
 
 } // namespace Parking

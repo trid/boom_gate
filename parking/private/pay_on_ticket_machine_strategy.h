@@ -6,6 +6,7 @@
 #define BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 
 #include "../public/gate_control_strategy.h"
+#include "../../shared/public/timer.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -26,10 +27,12 @@ class PayOnTicketMachineStrategy: public GateControlStrategy{
 public:
     PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
                                std::unordered_map<std::string, unsigned int>& carsRegistry,
-                               Billing::BillingInformationListener& billingListener, Gates::GatesController& gateController);
+                               Billing::BillingInformationListener& billingListener,
+                               Gates::GatesController& gateController,
+                               const Utils::Timer& timer);
 
-    void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
-    void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
+    void onCarEntering(std::size_t gateId, const std::string& carId) override;
+    void onCarLeaving(std::size_t gateId, const std::string& carId) override;
     void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
 
 private:
@@ -40,6 +43,8 @@ private:
     Billing::BillingInformationListener& _billingListener;
 
     Gates::GatesController& _gateController;
+
+    const Utils::Timer& _timer;
 };
 
 } // namespace Parking

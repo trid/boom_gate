@@ -14,24 +14,26 @@ namespace Parking {
 PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem,
                                      std::unordered_map<std::string, unsigned int>& carsRegistry,
                                      Billing::BillingInformationListener& billingListener,
-                                     Gates::GatesController& gateController) :
+                                     Gates::GatesController& gateController,
+                                     const Utils::Timer& timer) :
         _carsRegistry(carsRegistry),
         _billingSystem(billingSystem),
         _billingListener(billingListener),
-        _gateController(gateController) {}
+        _gateController(gateController),
+        _timer(timer) {}
 
-void PayOnGateStrategy::onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) {
-    _carsRegistry[carId] = tickId;
+void PayOnGateStrategy::onCarEntering(std::size_t gateId, const std::string& carId) {
+    _carsRegistry[carId] = _timer.getTicks();
 
     _gateController.releaseGate(gateId);
 }
 
-void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) {
+void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carId) {
     // Ensure gate is closed
     _gateController.closeGate(gateId);
 
     _carToGateId[carId] = gateId;
-    auto billingAmount = _billingSystem.getBill(carId, tickId);
+    auto billingAmount = _billingSystem.getBill(carId);
     _billingListener.billedFor(gateId, billingAmount);
 }
 

@@ -12,6 +12,7 @@
 #include "../../gates/public/gate.h"
 #include "../../gates/public/gates_controller.h"
 #include "../../gates/public/gates_controller_factory.h"
+#include "../../shared/public/timer.h"
 
 namespace Parking::Test {
 
@@ -45,6 +46,12 @@ public:
     MOCK_METHOD(bool, isOpen, (), (const, override));
 };
 
+class TimerMock: public Utils::Timer {
+public:
+    MOCK_METHOD(void, tick, (), (override));
+    MOCK_METHOD(unsigned int, getTicks, (), (const, override));
+};
+
 TEST(ParkingImplTestSuite, carEnters) {
     EventProducerMock eventProducer;
     EXPECT_CALL(eventProducer, hasEvents).WillOnce(Return(true)).WillOnce(Return(false));
@@ -63,9 +70,12 @@ TEST(ParkingImplTestSuite, carEnters) {
     auto gateController = Gates::GatesControllerFactory::create();
     gateController->addGate(std::move(gate));
 
+    TimerMock timer;
+
     ParkingImpl parking{std::move(paymentSystem),
                         GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock,  *gateController),
+                                                                    billingListenerMock, *gateController,
+                                                                    timer),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -88,9 +98,12 @@ TEST(ParkingImplTestSuite, carLeaves) {
     auto gateController = Gates::GatesControllerFactory::create();
     gateController->addGate(std::move(gate));
 
+    TimerMock timerMock;
+
     ParkingImpl parking{std::move(paymentSystem),
                         GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock,  *gateController),
+                                                                    billingListenerMock, *gateController,
+                                                                    timerMock),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -116,9 +129,12 @@ TEST(ParkingImplTestSuite, payedInCash) {
     auto gateController = Gates::GatesControllerFactory::create();
     gateController->addGate(std::move(gate));
 
+    TimerMock timerMock;
+
     ParkingImpl parking{std::move(paymentSystem),
                         GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock,  *gateController),
+                                                                    billingListenerMock, *gateController,
+                                                                    timerMock),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -145,9 +161,12 @@ TEST(ParkingImplTestSuite, payedWithCard) {
     auto gateController = Gates::GatesControllerFactory::create();
     gateController->addGate(std::move(gate));
 
+    TimerMock timerMock;
+
     ParkingImpl parking{std::move(paymentSystem),
                         GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListenerMock,  *gateController),
+                                                                    billingListenerMock, *gateController,
+                                                                    timerMock),
                         *billingSystem, billingListenerMock};
 
     parking.tick(eventProducer);
@@ -177,9 +196,11 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
     auto gateController = Gates::GatesControllerFactory::create();
     gateController->addGate(std::move(gate));
 
+    TimerMock timerMock;
+
     ParkingImpl parking{std::move(paymentSystem),
                         GateControlStrategyFactory::createPayOnGate(*billingSystem, carsRegistry,
-                                                                    billingListener,  *gateController),
+                                                                    billingListener, *gateController, timerMock),
                         *billingSystem, billingListener};
 
     parking.tick(eventProducer);

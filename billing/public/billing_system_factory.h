@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include "../../shared/public/timer.h"
 
 namespace Billing {
 
@@ -14,7 +15,8 @@ class BillingSystem;
 
 class BillingSystemFactory {
 public:
-    static std::unique_ptr<BillingSystem> create(const std::unordered_map<std::string, unsigned int>& registry);
+    static std::unique_ptr<BillingSystem>
+    create(const Utils::Timer& timer, const std::unordered_map<std::string, unsigned int>& registry);
 };
 
 } // namespace Billing

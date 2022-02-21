@@ -41,7 +41,6 @@ private:
     void requestBilling(const RequestBillingData& data);
 
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;
-    unsigned int _tickNumber = 0;
     std::unique_ptr<GateControlStrategy> _gateControlStrategy;
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;
