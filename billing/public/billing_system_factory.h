@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "../../shared/public/timer.h"
 #include "../../parking/public/car_registry.h"
+#include "../../parking/public/car_parking_time_provider.h"
 
 namespace Billing {
 
@@ -17,7 +18,7 @@ class BillingSystem;
 class BillingSystemFactory {
 public:
     static std::unique_ptr<BillingSystem>
-    create(const Utils::Timer& timer, const Parking::CarRegistry& registry);
+    create(const Utils::Timer& timer, const Parking::CarParkingTimeProvider& timeProvider);
 };
 
 } // namespace Billing

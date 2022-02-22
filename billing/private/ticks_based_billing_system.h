@@ -9,19 +9,19 @@
 
 #include "../public/billing_system.h"
 #include "../../shared/public/timer.h"
-#include "../../parking/public/car_registry.h"
+#include "../../parking/public/car_parking_time_provider.h"
 
 namespace Billing {
 
 class TicksBasedBillingSystem: public BillingSystem {
 public:
     explicit TicksBasedBillingSystem(const Utils::Timer& timer,
-                                     const Parking::CarRegistry& registry);
+                                     const Parking::CarParkingTimeProvider& timeProvider);
 
     unsigned int getBill(const std::string& carId) override;
 private:
     const Utils::Timer& _timer;
-    const Parking::CarRegistry& _registry;
+    const Parking::CarParkingTimeProvider& _timeProvider;
 };
 
 } // namespace Billing

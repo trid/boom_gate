@@ -9,12 +9,12 @@ namespace Billing {
 constexpr unsigned int pricePerTick = 10;
 
 TicksBasedBillingSystem::TicksBasedBillingSystem(const Utils::Timer& timer,
-                                                 const Parking::CarRegistry& registry)
+                                                 const Parking::CarParkingTimeProvider& timeProvider)
         : _timer(timer),
-        _registry(registry) {}
+          _timeProvider(timeProvider) {}
 
 unsigned int TicksBasedBillingSystem::getBill(const std::string& carId) {
-    auto timeEntered = _registry.getParkingTime(carId);
+    auto timeEntered = _timeProvider.getParkingTime(carId);
     return (_timer.getTicks() - timeEntered) * pricePerTick;
 }
 

@@ -6,14 +6,14 @@
 #define BOOM_GATE_APPLICATION_CAR_REGISTRY_H
 
 #include <string>
+#include "car_parking_time_provider.h"
 
 namespace Parking {
 
-class CarRegistry {
+class CarRegistry: public CarParkingTimeProvider {
 public:
     virtual void addCar(const std::string& accountId) = 0;
     virtual void removeCar(const std::string& accountId) = 0;
-    virtual unsigned int getParkingTime(const std::string& accountId) const = 0;
 };
 
 }

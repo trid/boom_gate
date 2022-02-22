@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "../public/car_parking_time_provider.h"
 #include "../public/car_registry.h"
 #include "../../shared/public/timer.h"
 

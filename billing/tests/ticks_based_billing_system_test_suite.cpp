@@ -6,6 +6,7 @@
 #include "gmock/gmock.h"
 
 #include "../private/ticks_based_billing_system.h"
+#include "../../parking/public/car_registry.h"
 
 class TimerMock: public Utils::Timer {
 public:

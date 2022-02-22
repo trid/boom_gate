@@ -10,8 +10,8 @@ namespace Billing {
 
 // static
 std::unique_ptr<BillingSystem>
-BillingSystemFactory::create(const Utils::Timer& timer, const Parking::CarRegistry& registry) {
-    return std::make_unique<TicksBasedBillingSystem>(timer, registry);
+BillingSystemFactory::create(const Utils::Timer& timer, const Parking::CarParkingTimeProvider& timeProvider) {
+    return std::make_unique<TicksBasedBillingSystem>(timer, timeProvider);
 }
 
 } // namespace Billing
