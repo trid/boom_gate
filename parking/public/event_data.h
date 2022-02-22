@@ -9,6 +9,7 @@
 #include <variant>
 
 #include "../../payments/public/payment_type.h"
+#include "../../payments/public/currency_amount.h"
 
 namespace Parking {
 
@@ -25,7 +26,7 @@ struct CarLeaveData {
 struct PaymentData {
     Payments::PaymentType paymentType;
     std::string carId;
-    unsigned int amount;
+    Payments::CurrencyAmount amount;
     std::string cardId;
 };
 

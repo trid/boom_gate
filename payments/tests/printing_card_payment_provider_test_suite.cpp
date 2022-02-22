@@ -15,7 +15,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentAccepted) {
     PrintingCardPaymentProvider paymentProvider(ss);
 
     PaymentResult result;
-    paymentProvider.pay(100, "1234432112344321", [&result](PaymentResult callbackResult){
+    paymentProvider.pay({100, "USD"}, "1234432112344321", [&result](PaymentResult callbackResult){
         result = callbackResult;
     });
 

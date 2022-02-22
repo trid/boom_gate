@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-#include "../private/printing_cash_payment_provider_test_suite.h"
+#include "../private/printing_cash_payment_provider.h"
 
 namespace Payments::Tests {
 
@@ -15,7 +15,7 @@ TEST(PrintingCashPaymentProviderTestSuite, paymentAccepted) {
     PrintingCashPaymentProvider paymentProvider(ss);
 
     PaymentResult result;
-    paymentProvider.pay(100, [&result](PaymentResult callbackResult){
+    paymentProvider.pay({100, "USD"}, [&result](PaymentResult callbackResult){
         result = callbackResult;
     });
 

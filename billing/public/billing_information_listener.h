@@ -7,13 +7,17 @@
 
 #include <string>
 
+namespace Payments {
+struct CurrencyAmount;
+} // namespace Payments
+
 namespace Billing {
 
 class BillingInformationListener {
 public:
     virtual ~BillingInformationListener() = default;
 
-    virtual void onBillingInformationProduced(const std::string& accountId, unsigned int amount) = 0;
+    virtual void onBillingInformationProduced(const std::string& accountId, const Payments::CurrencyAmount& amount) = 0;
 };
 
 } // namespace Billing

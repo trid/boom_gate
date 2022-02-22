@@ -44,9 +44,10 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     TimerMock timerMock;
     CarRegistryMock carsRegistry;
     auto gateMock = std::make_unique<GateMock>();
+    Payments::CurrencyAmount expectedAmount{100, "USD"};
 
     EXPECT_CALL(*gateMock, open);
-    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
+    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(expectedAmount));
     EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
@@ -55,7 +56,7 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     strategy.onCarEntering(0, "ab123c");
     strategy.onCarLeaving(0, "ab123c");
 
-    ASSERT_EQ(100, billingListenerMock.getBilledAmount());
+    ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }
 
 TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
@@ -64,9 +65,10 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     TimerMock timerMock;
     CarRegistryMock carsRegistry;
     auto gateMock = std::make_unique<GateMock>();
+    Payments::CurrencyAmount expectedAmount{100, "USD"};
 
     EXPECT_CALL(*gateMock, open).Times(2);
-    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
+    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(expectedAmount));
     EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
@@ -76,7 +78,7 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     strategy.onCarLeaving(0, "ab123c");
     strategy.onPayment("ab123c", Payments::PaymentResult::Accepted);
 
-    ASSERT_EQ(100, billingListenerMock.getBilledAmount());
+    ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }
 
 } // namespace Parking::Test

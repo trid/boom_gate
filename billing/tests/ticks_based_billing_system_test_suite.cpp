@@ -34,7 +34,8 @@ TEST(TicksBasedBillingSystemTestSuite, billCarForSpentTime) {
     TicksBasedBillingSystem billingSystem{timerMock, carRegistryMock};
     auto billedAmount = billingSystem.getBill(carId);
 
-    ASSERT_EQ(50, billedAmount);
+    Payments::CurrencyAmount expected{50, "USD"};
+    ASSERT_EQ(expected, billedAmount);
 }
 
 } // namespace Billing::Tests

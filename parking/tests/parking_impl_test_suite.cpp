@@ -12,6 +12,7 @@
 #include "../private/parking_impl.h"
 #include "../../gates/public/gate.h"
 #include "../../shared/public/timer.h"
+#include "../../payments/public/currency_amount.h"
 
 namespace Parking::Test {
 
@@ -27,14 +28,14 @@ class PaymentSystemMock : public Payments::PaymentSystem {
 public:
     PaymentSystemMock() {
         ON_CALL(*this, pay).WillByDefault(
-                [this](Payments::PaymentType paymentType, unsigned int amount, const std::string& paymentData,
+                [this](Payments::PaymentType paymentType, const Payments::CurrencyAmount& amount, const std::string& paymentData,
                        const Payments::PaymentCallback& callback) {
                     callback(Payments::PaymentResult::Accepted);
                 });
     }
 
     MOCK_METHOD(void, pay,
-                (Payments::PaymentType paymentType, unsigned int amount, const std::string& paymentData, Payments::PaymentCallback),
+                (Payments::PaymentType paymentType, const Payments::CurrencyAmount& amount, const std::string& paymentData, Payments::PaymentCallback),
                 (override));
 };
 
@@ -45,13 +46,13 @@ public:
     MOCK_METHOD(bool, isOpen, (), (const, override));
 };
 
-class TimerMock: public Utils::Timer {
+class TimerMock : public Utils::Timer {
 public:
     MOCK_METHOD(void, tick, (), (override));
     MOCK_METHOD(unsigned int, getTicks, (), (const, override));
 };
 
-class CarRegistryMock: public CarRegistry {
+class CarRegistryMock : public CarRegistry {
 public:
     MOCK_METHOD(void, addCar, (const std::string&), (override));
     MOCK_METHOD(void, removeCar, (const std::string&), (override));
@@ -185,8 +186,9 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
     auto gate = std::make_unique<GateMock>();
     auto paymentSystem = std::make_unique<PaymentSystemMock>();
 
+    Payments::CurrencyAmount expectedAmount{100, "USD"};
     auto billingSystem = std::make_unique<BillingSystemMock>();
-    EXPECT_CALL(*billingSystem, getBill).WillOnce(Return(100));
+    EXPECT_CALL(*billingSystem, getBill).WillOnce(Return(expectedAmount));
 
     auto billingListener = BillingListenerMock();
     EXPECT_CALL(billingListener, onBillingInformationProduced);
@@ -204,7 +206,7 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
 
     parking.tick(eventProducer);
 
-    ASSERT_EQ(100, billingListener.getBilledAmount());
+    ASSERT_EQ(expectedAmount, billingListener.getBilledAmount());
 }
 
 } // namespace Parking::Test

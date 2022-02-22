@@ -13,9 +13,9 @@ TicksBasedBillingSystem::TicksBasedBillingSystem(const Utils::Timer& timer,
         : _timer(timer),
           _timeProvider(timeProvider) {}
 
-unsigned int TicksBasedBillingSystem::getBill(const std::string& carId) {
+Payments::CurrencyAmount TicksBasedBillingSystem::getBill(const std::string& carId) {
     auto timeEntered = _timeProvider.getParkingTime(carId);
-    return (_timer.getTicks() - timeEntered) * pricePerTick;
+    return {(_timer.getTicks() - timeEntered) * pricePerTick, "USD"};
 }
 
 } // namespace Billing

@@ -18,7 +18,7 @@ Payments::SimplePaymentSystem::SimplePaymentSystem(std::unique_ptr<CashPaymentPr
         _subscriptionCardPaymentProvider(std::move(subscriptionCardPaymentProvider)) {}
 
 
-void Payments::SimplePaymentSystem::pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData,
+void Payments::SimplePaymentSystem::pay(PaymentType paymentType, const CurrencyAmount& amount, const std::string& paymentData,
                                         PaymentCallback callback) {
     switch (paymentType) {
         case Cash:

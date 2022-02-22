@@ -7,6 +7,7 @@
 
 #include "payments_defs.h"
 #include "payment_type.h"
+#include "currency_amount.h"
 
 namespace Payments {
 
@@ -15,7 +16,7 @@ public:
     virtual ~PaymentSystem() = default;
 
     virtual void
-    pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData, PaymentCallback callback) = 0;
+    pay(PaymentType paymentType, const Payments::CurrencyAmount& amount, const std::string& paymentData, PaymentCallback callback) = 0;
 };
 
 } // namespace Payments
