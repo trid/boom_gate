@@ -13,7 +13,7 @@ PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(CarRegistry& carsRegistry
                                                        : _carsRegistry(carsRegistry) {}
 
 void PayOnTicketMachineStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
-    _carsRegistry.addCar(accountId);
+    _carsRegistry.onCarEnter(accountId);
     GateControllerBase::releaseGate(gateId);
 }
 

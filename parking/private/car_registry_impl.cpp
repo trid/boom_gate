@@ -8,11 +8,11 @@ Parking::CarRegistryImpl::CarRegistryImpl(const Utils::Timer& timer, unsigned in
     : _timer(timer),
     _maxParkingPlaces(maxParkingPlaces) {}
 
-void Parking::CarRegistryImpl::addCar(const boost::uuids::uuid& accountId) {
+void Parking::CarRegistryImpl::onCarEnter(const boost::uuids::uuid& accountId) {
     _carEnteredTime[accountId] = _timer.getTicks();
 }
 
-void Parking::CarRegistryImpl::removeCar(const boost::uuids::uuid& accountId) {
+void Parking::CarRegistryImpl::onCarLeaved(const boost::uuids::uuid& accountId) {
     _carEnteredTime.erase(accountId);
 }
 

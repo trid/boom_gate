@@ -20,7 +20,7 @@ PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarR
 
 void PayOnGateStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
     if (_carsRegistry.hasAvailableParkingLots()) {
-        _carsRegistry.addCar(accountId);
+        _carsRegistry.onCarEnter(accountId);
 
         GateControllerBase::releaseGate(gateId);
     }
@@ -45,7 +45,7 @@ void PayOnGateStrategy::onPayment(const boost::uuids::uuid& accountId, Payments:
     }
 
     auto gateId = _carToGateId[accountId];
-    _carsRegistry.removeCar(accountId);
+    _carsRegistry.onCarLeaved(accountId);
     _carToGateId.erase(accountId);
     GateControllerBase::releaseGate(gateId);
 }

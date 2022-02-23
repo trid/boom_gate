@@ -20,8 +20,8 @@ class CarRegistryImpl: public CarRegistry {
 public:
     explicit CarRegistryImpl(const Utils::Timer& timer, unsigned int maxParkingPlaces);
 
-    void addCar(const boost::uuids::uuid& accountId) override;
-    void removeCar(const boost::uuids::uuid& accountId) override;
+    void onCarEnter(const boost::uuids::uuid& accountId) override;
+    void onCarLeaved(const boost::uuids::uuid& accountId) override;
     unsigned int getParkingTime(const boost::uuids::uuid& accountId) const override;
 
     bool hasAvailableParkingLots() const override;
