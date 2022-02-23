@@ -17,23 +17,32 @@
 
 class BillingInformationListenerStub : public Billing::BillingInformationListener {
 public:
-    void onBillingInformationProduced(const boost::uuids::uuid& accountId, const Payments::CurrencyAmount& amount) override {
+    void onBillingInformationProduced(const boost::uuids::uuid& accountId,
+                                      const Payments::CurrencyAmount& amount) override {
 
     }
 };
 
+class ParkingErrorListenerStub : public Parking::ParkingErrorListener {
+public:
+    void onError(const std::string& description) override {
+
+    }
+};
 
 int main(int, char**) {
     TickTimer timer;
 
     auto paymentSystem = Payments::PaymentSystemFactory::create();
-    auto carRegistry = Parking::CarRegistryFactory::create(timer);
+    auto carRegistry = Parking::CarRegistryFactory::create(timer, 0);
     auto billingSystem = Billing::BillingSystemFactory::create(timer, *carRegistry);
 
     BillingInformationListenerStub billingInformationListenerStub;
+    ParkingErrorListenerStub parkingErrorListenerStub;
     auto gateControlStrategy = Parking::GateControlStrategyFactory::createPayOnGate(*billingSystem,
                                                                                     *carRegistry,
-                                                                                    billingInformationListenerStub);
+                                                                                    billingInformationListenerStub,
+                                                                                    parkingErrorListenerStub);
     gateControlStrategy->addGate(Gates::GateFactory::create());
     gateControlStrategy->addGate(Gates::GateFactory::create());
     gateControlStrategy->addGate(Gates::GateFactory::create());

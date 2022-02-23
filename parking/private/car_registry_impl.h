@@ -18,15 +18,18 @@ namespace Parking {
 
 class CarRegistryImpl: public CarRegistry {
 public:
-    explicit CarRegistryImpl(const Utils::Timer& timer);
+    explicit CarRegistryImpl(const Utils::Timer& timer, unsigned int maxParkingPlaces);
 
     void addCar(const boost::uuids::uuid& accountId) override;
     void removeCar(const boost::uuids::uuid& accountId) override;
     unsigned int getParkingTime(const boost::uuids::uuid& accountId) const override;
 
+    bool hasAvailableParkingLots() const override;
+
 private:
     const Utils::Timer& _timer;
     std::unordered_map<boost::uuids::uuid, unsigned int, boost::hash<boost::uuids::uuid>> _carEnteredTime;
+    unsigned int _maxParkingPlaces;
 };
 
 }

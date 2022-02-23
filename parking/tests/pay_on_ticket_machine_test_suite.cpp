@@ -11,6 +11,7 @@
 
 #include "../private/pay_on_ticket_machine_strategy.h"
 #include "../../gates/public/gate.h"
+#include "../public/parking_error_listener.h"
 
 namespace Parking::Test {
 
@@ -27,6 +28,7 @@ public:
     MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
+    MOCK_METHOD(bool, hasAvailableParkingLots, (), (const override));
 };
 
 class GateMock: public Gates::Gate {
@@ -35,6 +37,7 @@ public:
     MOCK_METHOD(void, close, (), (override));
     bool isOpen() const override { return true; }
 };
+
 
 TEST(PayOnTicketMachineStrategyTestSuite, carEnteredStoppedLeaving) {
     BillingSystemMock billingSystemMock;

@@ -14,8 +14,9 @@ namespace Parking {
 // static
 std::unique_ptr<GateControlStrategy>
 GateControlStrategyFactory::createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                                            Billing::BillingInformationListener& billingListener) {
-    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener);
+                                            Billing::BillingInformationListener& billingListener,
+                                            ParkingErrorListener& parkingErrorListener) {
+    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener, parkingErrorListener);
 }
 
 std::unique_ptr<GateControlStrategy>

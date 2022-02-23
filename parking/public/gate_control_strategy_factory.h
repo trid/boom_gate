@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include <boost/optional.hpp>
+#include "parking_error_listener.h"
 
 namespace Billing {
 class BillingInformationListener;
@@ -32,7 +33,8 @@ class GateControlStrategyFactory {
 public:
     static std::unique_ptr<GateControlStrategy>
     createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                    Billing::BillingInformationListener& billingListener);
+                    Billing::BillingInformationListener& billingListener,
+                    ParkingErrorListener& parkingErrorListener);
     static std::unique_ptr<GateControlStrategy> createPayOnTicketMachine(CarRegistry& carsRegistry);
 };
 

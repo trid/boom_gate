@@ -9,8 +9,8 @@
 namespace Parking {
 
 // static
-std::unique_ptr<CarRegistry> CarRegistryFactory::create(const Utils::Timer& timer) {
-    return std::make_unique<CarRegistryImpl>(timer);
+std::unique_ptr<CarRegistry> CarRegistryFactory::create(const Utils::Timer& timer, unsigned int maxCarsAmount) {
+    return std::make_unique<CarRegistryImpl>(timer, maxCarsAmount);
 }
 
 }

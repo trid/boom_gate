@@ -4,7 +4,9 @@
 
 #include "car_registry_impl.h"
 
-Parking::CarRegistryImpl::CarRegistryImpl(const Utils::Timer& timer) : _timer(timer) {}
+Parking::CarRegistryImpl::CarRegistryImpl(const Utils::Timer& timer, unsigned int maxParkingPlaces)
+    : _timer(timer),
+    _maxParkingPlaces(maxParkingPlaces) {}
 
 void Parking::CarRegistryImpl::addCar(const boost::uuids::uuid& accountId) {
     _carEnteredTime[accountId] = _timer.getTicks();
@@ -20,4 +22,8 @@ unsigned int Parking::CarRegistryImpl::getParkingTime(const boost::uuids::uuid& 
     }
     // TODO (Guess what?) process an error here
     return 0;
+}
+
+bool Parking::CarRegistryImpl::hasAvailableParkingLots() const {
+    return _carEnteredTime.size() == _maxParkingPlaces;
 }

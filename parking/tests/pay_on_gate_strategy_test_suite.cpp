@@ -10,6 +10,7 @@
 #include "tests_shared.h"
 
 #include "../private/pay_on_gate_strategy.h"
+#include "../public/parking_error_listener.h"
 #include "../../gates/public/gate.h"
 
 namespace Parking::Test {
@@ -27,6 +28,7 @@ public:
     MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
+    MOCK_METHOD(bool, hasAvailableParkingLots, (), (const override));
 };
 
 class GateMock: public Gates::Gate {
@@ -36,6 +38,12 @@ public:
     bool isOpen() const override { return true; }
 };
 
+class ParkingErrorListenerStub: public ParkingErrorListener {
+public:
+    void onError(const std::string& description) override {
+
+    }
+};
 
 TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     BillingSystemMock billingSystemMock;
@@ -50,7 +58,8 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock};
+    ParkingErrorListenerStub parkingErrorListenerStub;
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, parkingErrorListenerStub};
     strategy.addGate(std::move(gateMock));
     strategy.onCarEntering(0, {});
     strategy.onCarLeaving(0, {});
@@ -71,7 +80,8 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock};
+    ParkingErrorListenerStub parkingErrorListenerStub;
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, parkingErrorListenerStub};
     strategy.addGate(std::move(gateMock));
     strategy.onCarEntering(0, {});
     strategy.onCarLeaving(0, {});

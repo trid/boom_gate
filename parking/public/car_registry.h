@@ -10,10 +10,11 @@
 #include <boost/uuid/uuid.hpp>
 
 #include "car_parking_time_provider.h"
+#include "parking_places_availability_provider.h"
 
 namespace Parking {
 
-class CarRegistry: public CarParkingTimeProvider {
+class CarRegistry: public CarParkingTimeProvider, public ParkingPlacesAvailabilityProvider{
 public:
     virtual void addCar(const boost::uuids::uuid& accountId) = 0;
     virtual void removeCar(const boost::uuids::uuid& accountId) = 0;

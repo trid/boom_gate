@@ -4,20 +4,29 @@
 
 #include "pay_on_gate_strategy.h"
 
+#include "../public/parking_error_listener.h"
+
 #include "../../gates/public/gate.h"
 
 namespace Parking {
 
 PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                                     Billing::BillingInformationListener& billingListener) :
+                                     Billing::BillingInformationListener& billingListener,
+                                     ParkingErrorListener& parkingErrorListener) :
         _carsRegistry(carsRegistry),
         _billingSystem(billingSystem),
-        _billingListener(billingListener) {}
+        _billingListener(billingListener),
+        _parkingErrorListener(parkingErrorListener) {}
 
 void PayOnGateStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
-    _carsRegistry.addCar(accountId);
+    if (_carsRegistry.hasAvailableParkingLots()) {
+        _carsRegistry.addCar(accountId);
 
-    GateControllerBase::releaseGate(gateId);
+        GateControllerBase::releaseGate(gateId);
+    }
+    else {
+        _parkingErrorListener.onError("Parking is full");
+    }
 }
 
 void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) {

@@ -51,12 +51,21 @@ public:
     MOCK_METHOD(unsigned int, getTicks, (), (const, override));
 };
 
-class CarRegistryMock : public CarRegistry {
+class CarRegistryMock: public CarRegistry {
 public:
     MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
+    MOCK_METHOD(bool, hasAvailableParkingLots, (), (const override));
 };
+
+class ParkingErrorListenerStub: public ParkingErrorListener {
+public:
+    void onError(const std::string& description) override {
+
+    }
+};
+
 
 TEST(ParkingImplTestSuite, carEnters) {
     EventProducerMock eventProducer;
@@ -75,9 +84,10 @@ TEST(ParkingImplTestSuite, carEnters) {
 
     TimerMock timer;
 
+    ParkingErrorListenerStub parkingErrorListenerStub;
     std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
             *billingSystem, carsRegistry,
-            billingListenerMock);
+            billingListenerMock, parkingErrorListenerStub);
     gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),
@@ -101,9 +111,10 @@ TEST(ParkingImplTestSuite, carLeaves) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    ParkingErrorListenerStub parkingErrorListenerStub;
     std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
             *billingSystem, carsRegistry,
-            billingListenerMock);
+            billingListenerMock, parkingErrorListenerStub);
     gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),
@@ -130,9 +141,10 @@ TEST(ParkingImplTestSuite, payedInCash) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    ParkingErrorListenerStub parkingErrorListenerStub;
     std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
             *billingSystem, carsRegistry,
-            billingListenerMock);
+            billingListenerMock, parkingErrorListenerStub);
     gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),
@@ -160,9 +172,10 @@ TEST(ParkingImplTestSuite, payedWithCard) {
     auto billingSystem = std::make_unique<BillingSystemMock>();
     BillingListenerMock billingListenerMock;
 
+    ParkingErrorListenerStub parkingErrorListenerStub;
     std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
             *billingSystem, carsRegistry,
-            billingListenerMock);
+            billingListenerMock, parkingErrorListenerStub);
     gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),
@@ -194,9 +207,10 @@ TEST(ParkingImplTestSuite, carIsBilledWhenLeave) {
 
     CarRegistryMock carsRegistry;
 
+    ParkingErrorListenerStub parkingErrorListenerStub;
     std::unique_ptr<GateControlStrategy> gateController = GateControlStrategyFactory::createPayOnGate(
             *billingSystem, carsRegistry,
-            billingListener);
+            billingListener, parkingErrorListenerStub);
     gateController->addGate(std::move(gate));
 
     ParkingImpl parking{std::move(paymentSystem),

@@ -13,7 +13,7 @@ namespace Parking {
 
 class CarRegistryFactory {
 public:
-    static std::unique_ptr<CarRegistry> create(const Utils::Timer& timer);
+    static std::unique_ptr<CarRegistry> create(const Utils::Timer& timer, unsigned int maxCarsAmount);
 };
 
 }

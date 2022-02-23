@@ -26,10 +26,12 @@ class GatesController;
 
 namespace Parking {
 
+class ParkingErrorListener;
+
 class PayOnGateStrategy : public GateControlStrategy, private GateControllerBase {
 public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                      Billing::BillingInformationListener& billingListener);
+                      Billing::BillingInformationListener& billingListener, ParkingErrorListener& parkingErrorListener);
 
     void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
     void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
@@ -43,6 +45,8 @@ private:
 
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;
+
+    ParkingErrorListener& _parkingErrorListener;
 };
 
 } // namespace Parking
