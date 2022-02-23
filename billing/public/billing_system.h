@@ -6,6 +6,9 @@
 #define BOOM_GATE_APPLICATION_BILLING_SYSTEM_H
 
 #include <string>
+
+#include <boost/uuid/uuid.hpp>
+
 #include "../../payments/public/currency_amount.h"
 
 namespace Billing {
@@ -14,7 +17,7 @@ class BillingSystem {
 public:
     virtual ~BillingSystem() = default;
 
-    virtual Payments::CurrencyAmount getBill(const std::string& carId) = 0;
+    virtual Payments::CurrencyAmount getBill(const boost::uuids::uuid& accountId) = 0;
 };
 
 } // namespace Billing

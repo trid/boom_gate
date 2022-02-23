@@ -11,7 +11,6 @@
 
 #include "../private/pay_on_gate_strategy.h"
 #include "../../gates/public/gate.h"
-#include "../public/car_registry.h"
 
 namespace Parking::Test {
 
@@ -25,9 +24,9 @@ public:
 
 class CarRegistryMock: public CarRegistry {
 public:
-    MOCK_METHOD(void, addCar, (const std::string&), (override));
-    MOCK_METHOD(void, removeCar, (const std::string&), (override));
-    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+    MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
 };
 
 class GateMock: public Gates::Gate {
@@ -53,8 +52,8 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
 
     PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock};
     strategy.addGate(std::move(gateMock));
-    strategy.onCarEntering(0, "ab123c");
-    strategy.onCarLeaving(0, "ab123c");
+    strategy.onCarEntering(0, {});
+    strategy.onCarLeaving(0, {});
 
     ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }
@@ -74,9 +73,9 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
 
     PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock};
     strategy.addGate(std::move(gateMock));
-    strategy.onCarEntering(0, "ab123c");
-    strategy.onCarLeaving(0, "ab123c");
-    strategy.onPayment("ab123c", Payments::PaymentResult::Accepted);
+    strategy.onCarEntering(0, {});
+    strategy.onCarLeaving(0, {});
+    strategy.onPayment({}, Payments::PaymentResult::Accepted);
 
     ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }

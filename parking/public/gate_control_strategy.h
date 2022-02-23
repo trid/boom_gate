@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 
+#include <boost/uuid/uuid.hpp>
+
 #include "../../payments/public/payment_result.h"
 #include "../../gates/public/gates_defs.h"
 
@@ -21,9 +23,9 @@ class GateControlStrategy {
 public:
     virtual ~GateControlStrategy() = default;
 
-    virtual void onCarEntering(std::size_t gateId, const std::string& carId) = 0;
-    virtual void onCarLeaving(std::size_t gateId, const std::string& carId) = 0;
-    virtual void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) = 0;
+    virtual void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) = 0;
+    virtual void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) = 0;
+    virtual void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) = 0;
 
     virtual void addGate(Gates::GateUPtr gate) = 0;
 };

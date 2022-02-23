@@ -14,30 +14,30 @@ PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarR
         _billingSystem(billingSystem),
         _billingListener(billingListener) {}
 
-void PayOnGateStrategy::onCarEntering(std::size_t gateId, const std::string& carId) {
-    _carsRegistry.addCar(carId);
+void PayOnGateStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
+    _carsRegistry.addCar(accountId);
 
     GateControllerBase::releaseGate(gateId);
 }
 
-void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const std::string& carId) {
+void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) {
     // Ensure gate is closed
     GateControllerBase::closeGate(gateId);
 
-    _carToGateId[carId] = gateId;
-    auto billingAmount = _billingSystem.getBill(carId);
-    _billingListener.onBillingInformationProduced(carId, billingAmount);
+    _carToGateId[accountId] = gateId;
+    auto billingAmount = _billingSystem.getBill(accountId);
+    _billingListener.onBillingInformationProduced(accountId, billingAmount);
 }
 
-void PayOnGateStrategy::onPayment(const std::string& carId, Payments::PaymentResult paymentResult) {
+void PayOnGateStrategy::onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) {
     if (paymentResult != Payments::Accepted) {
         // TODO Log payment errors
         return;
     }
 
-    auto gateId = _carToGateId[carId];
-    _carsRegistry.removeCar(carId);
-    _carToGateId.erase(carId);
+    auto gateId = _carToGateId[accountId];
+    _carsRegistry.removeCar(accountId);
+    _carToGateId.erase(accountId);
     GateControllerBase::releaseGate(gateId);
 }
 

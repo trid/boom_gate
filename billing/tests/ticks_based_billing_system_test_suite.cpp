@@ -16,15 +16,14 @@ public:
 
 class CarRegistryMock: public Parking::CarRegistry {
 public:
-    MOCK_METHOD(void, addCar, (const std::string&), (override));
-    MOCK_METHOD(void, removeCar, (const std::string&), (override));
-    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+    MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
 };
 
 namespace Billing::Tests {
 
 TEST(TicksBasedBillingSystemTestSuite, billCarForSpentTime) {
-    constexpr char carId[] = "ab123c";
     TimerMock timerMock;
     CarRegistryMock carRegistryMock;
 
@@ -32,7 +31,7 @@ TEST(TicksBasedBillingSystemTestSuite, billCarForSpentTime) {
     EXPECT_CALL(carRegistryMock, getParkingTime).WillOnce(testing::Return(0));
 
     TicksBasedBillingSystem billingSystem{timerMock, carRegistryMock};
-    auto billedAmount = billingSystem.getBill(carId);
+    auto billedAmount = billingSystem.getBill({});
 
     Payments::CurrencyAmount expected{50, "USD"};
     ASSERT_EQ(expected, billedAmount);

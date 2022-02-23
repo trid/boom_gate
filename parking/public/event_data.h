@@ -8,6 +8,8 @@
 #include <string>
 #include <variant>
 
+#include <boost/uuid/uuid.hpp>
+
 #include "../../payments/public/payment_type.h"
 #include "../../payments/public/currency_amount.h"
 
@@ -15,23 +17,23 @@ namespace Parking {
 
 struct CarEnterData {
     std::size_t gateId;
-    std::string carId;
+    boost::uuids::uuid accountId;
 };
 
 struct CarLeaveData {
     std::size_t gateId;
-    std::string carId;
+    boost::uuids::uuid accountId;
 };
 
 struct PaymentData {
     Payments::PaymentType paymentType;
-    std::string carId;
+    boost::uuids::uuid accountId;
     Payments::CurrencyAmount amount;
     std::string cardId;
 };
 
 struct RequestBillingData {
-    std::string carId;
+    boost::uuids::uuid accountId;
 };
 
 using EventData = std::variant<CarEnterData, CarLeaveData, PaymentData, RequestBillingData>;

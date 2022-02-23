@@ -20,7 +20,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentAccepted) {
     });
 
     ASSERT_EQ(PaymentResult::Accepted, result);
-    ASSERT_EQ("Payed $100 from 1234432112344321\n", ss.str());
+    ASSERT_EQ("Payed 100 USD from 1234432112344321\n", ss.str());
 }
 
 } // namespace Payments::Tests

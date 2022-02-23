@@ -13,8 +13,8 @@ TicksBasedBillingSystem::TicksBasedBillingSystem(const Utils::Timer& timer,
         : _timer(timer),
           _timeProvider(timeProvider) {}
 
-Payments::CurrencyAmount TicksBasedBillingSystem::getBill(const std::string& carId) {
-    auto timeEntered = _timeProvider.getParkingTime(carId);
+Payments::CurrencyAmount TicksBasedBillingSystem::getBill(const boost::uuids::uuid& accountId) {
+    auto timeEntered = _timeProvider.getParkingTime(accountId);
     return {(_timer.getTicks() - timeEntered) * pricePerTick, "USD"};
 }
 

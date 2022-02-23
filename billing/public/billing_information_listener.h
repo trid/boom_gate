@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include <boost/uuid/uuid.hpp>
+
 namespace Payments {
 struct CurrencyAmount;
 } // namespace Payments
@@ -17,7 +19,7 @@ class BillingInformationListener {
 public:
     virtual ~BillingInformationListener() = default;
 
-    virtual void onBillingInformationProduced(const std::string& accountId, const Payments::CurrencyAmount& amount) = 0;
+    virtual void onBillingInformationProduced(const boost::uuids::uuid& accountId, const Payments::CurrencyAmount& amount) = 0;
 };
 
 } // namespace Billing

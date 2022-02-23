@@ -18,7 +18,7 @@ public:
     explicit TicksBasedBillingSystem(const Utils::Timer& timer,
                                      const Parking::CarParkingTimeProvider& timeProvider);
 
-    Payments::CurrencyAmount getBill(const std::string& carId) override;
+    Payments::CurrencyAmount getBill(const boost::uuids::uuid& accountId) override;
 private:
     const Utils::Timer& _timer;
     const Parking::CarParkingTimeProvider& _timeProvider;

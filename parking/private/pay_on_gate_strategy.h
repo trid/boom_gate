@@ -7,7 +7,8 @@
 
 #include <unordered_map>
 #include <vector>
-#include <boost/optional.hpp>
+
+#include <boost/functional/hash.hpp>
 
 #include "../public/gate_control_strategy.h"
 #include "../../shared/public/timer.h"
@@ -30,15 +31,15 @@ public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
                       Billing::BillingInformationListener& billingListener);
 
-    void onCarEntering(std::size_t gateId, const std::string& carId) override;
-    void onCarLeaving(std::size_t gateId, const std::string& carId) override;
-    void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
+    void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) override;
 
     void addGate(Gates::GateUPtr gate) override;
 
 private:
     CarRegistry& _carsRegistry;
-    std::unordered_map<std::string, unsigned int> _carToGateId;
+    std::unordered_map<boost::uuids::uuid, unsigned int, boost::hash<boost::uuids::uuid>> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;

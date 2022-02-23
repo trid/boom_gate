@@ -11,7 +11,6 @@
 
 #include "../private/pay_on_ticket_machine_strategy.h"
 #include "../../gates/public/gate.h"
-#include "../public/car_registry.h"
 
 namespace Parking::Test {
 
@@ -25,9 +24,9 @@ public:
 
 class CarRegistryMock: public CarRegistry {
 public:
-    MOCK_METHOD(void, addCar, (const std::string&), (override));
-    MOCK_METHOD(void, removeCar, (const std::string&), (override));
-    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+    MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
 };
 
 class GateMock: public Gates::Gate {
@@ -42,6 +41,7 @@ TEST(PayOnTicketMachineStrategyTestSuite, carEnteredStoppedLeaving) {
     BillingListenerMock billingListenerMock;
     CarRegistryMock carsRegistry;
     auto gateMock = std::make_unique<GateMock>();
+    boost::uuids::uuid testAccount{};
 
     EXPECT_CALL(*gateMock, open);
     EXPECT_CALL(*gateMock, close).Times(2);
@@ -50,8 +50,8 @@ TEST(PayOnTicketMachineStrategyTestSuite, carEnteredStoppedLeaving) {
 
     PayOnTicketMachineStrategy strategy{carsRegistry};
     strategy.addGate(std::move(gateMock));
-    strategy.onCarEntering(0, "ab123c");
-    strategy.onCarLeaving(0, "ab123c");
+    strategy.onCarEntering(0, testAccount);
+    strategy.onCarLeaving(0, testAccount);
 }
 
 TEST(PayOnTicketMachineStrategyTestSuite, carPayedCanLeave) {
@@ -66,9 +66,9 @@ TEST(PayOnTicketMachineStrategyTestSuite, carPayedCanLeave) {
 
     PayOnTicketMachineStrategy strategy{carsRegistry};
     strategy.addGate(std::move(gateMock));
-    strategy.onCarEntering(0, "ab123c");
-    strategy.onPayment("ab123c", Payments::PaymentResult::Accepted);
-    strategy.onCarLeaving(0, "ab123c");
+    strategy.onCarEntering(0, {});
+    strategy.onPayment({}, Payments::PaymentResult::Accepted);
+    strategy.onCarLeaving(0, {});
 }
 
 } // namespace Parking::Test

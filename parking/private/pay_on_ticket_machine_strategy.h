@@ -5,14 +5,17 @@
 #ifndef BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 #define BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+#include <boost/functional/hash.hpp>
+
 #include "../public/gate_control_strategy.h"
 #include "../../shared/public/timer.h"
 #include "../public/car_registry.h"
 #include "gate_controller_base.h"
 
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 namespace Billing {
 class BillingInformationListener;
@@ -26,15 +29,15 @@ class PayOnTicketMachineStrategy: public GateControlStrategy, private GateContro
 public:
     explicit PayOnTicketMachineStrategy(CarRegistry& carsRegistry);
 
-    void onCarEntering(std::size_t gateId, const std::string& carId) override;
-    void onCarLeaving(std::size_t gateId, const std::string& carId) override;
-    void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
+    void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) override;
 
     void addGate(Gates::GateUPtr gate) override;
 
 private:
     CarRegistry& _carsRegistry;
-    std::unordered_set<std::string> _payedCars;
+    std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> _payedCars;
 };
 
 } // namespace Parking

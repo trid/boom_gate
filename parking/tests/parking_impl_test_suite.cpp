@@ -12,7 +12,6 @@
 #include "../private/parking_impl.h"
 #include "../../gates/public/gate.h"
 #include "../../shared/public/timer.h"
-#include "../../payments/public/currency_amount.h"
 
 namespace Parking::Test {
 
@@ -54,9 +53,9 @@ public:
 
 class CarRegistryMock : public CarRegistry {
 public:
-    MOCK_METHOD(void, addCar, (const std::string&), (override));
-    MOCK_METHOD(void, removeCar, (const std::string&), (override));
-    MOCK_METHOD(unsigned int, getParkingTime, (const std::string&), (const override));
+    MOCK_METHOD(void, addCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, removeCar, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
 };
 
 TEST(ParkingImplTestSuite, carEnters) {

@@ -10,4 +10,4 @@ add_library(billing private/ticks_based_billing_system.cpp
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(Billing_Tests_run tests/ticks_based_billing_system_test_suite.cpp)
-target_link_libraries(Billing_Tests_run billing gtest gtest_main gmock gmock_main)
+target_link_libraries(Billing_Tests_run billing gtest gtest_main gmock gmock_main bcrypt)

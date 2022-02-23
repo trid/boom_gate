@@ -8,6 +8,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <boost/functional/hash.hpp>
+
 #include "../public/car_parking_time_provider.h"
 #include "../public/car_registry.h"
 #include "../../shared/public/timer.h"
@@ -18,13 +20,13 @@ class CarRegistryImpl: public CarRegistry {
 public:
     explicit CarRegistryImpl(const Utils::Timer& timer);
 
-    void addCar(const std::string& accountId) override;
-    void removeCar(const std::string& accountId) override;
-    unsigned int getParkingTime(const std::string& accountId) const override;
+    void addCar(const boost::uuids::uuid& accountId) override;
+    void removeCar(const boost::uuids::uuid& accountId) override;
+    unsigned int getParkingTime(const boost::uuids::uuid& accountId) const override;
 
 private:
     const Utils::Timer& _timer;
-    std::unordered_map<std::string, unsigned int> _carEnteredTime;
+    std::unordered_map<boost::uuids::uuid, unsigned int, boost::hash<boost::uuids::uuid>> _carEnteredTime;
 };
 
 }

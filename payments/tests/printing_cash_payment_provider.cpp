@@ -20,7 +20,7 @@ TEST(PrintingCashPaymentProviderTestSuite, paymentAccepted) {
     });
 
     ASSERT_EQ(PaymentResult::Accepted, result);
-    ASSERT_EQ("Payed $100 in cash\n", ss.str());
+    ASSERT_EQ("Payed 100 USD in cash\n", ss.str());
 }
 
 } // namespace Payments::Tests

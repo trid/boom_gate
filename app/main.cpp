@@ -17,7 +17,7 @@
 
 class BillingInformationListenerStub : public Billing::BillingInformationListener {
 public:
-    void onBillingInformationProduced(const std::string& accountId, const Payments::CurrencyAmount& amount) override {
+    void onBillingInformationProduced(const boost::uuids::uuid& accountId, const Payments::CurrencyAmount& amount) override {
 
     }
 };

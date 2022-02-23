@@ -38,25 +38,25 @@ void ParkingImpl::tick(EventProducer& eventProducer) {
 }
 
 void ParkingImpl::carEnters(const CarEnterData& data) {
-    _gateControlStrategy->onCarEntering(data.gateId, data.carId);
+    _gateControlStrategy->onCarEntering(data.gateId, data.accountId);
 }
 
 void ParkingImpl::carLeaves(const CarLeaveData& data) {
-    _gateControlStrategy->onCarLeaving(data.gateId, data.carId);
+    _gateControlStrategy->onCarLeaving(data.gateId, data.accountId);
 }
 
 void ParkingImpl::payed(const PaymentData& data) {
     _paymentSystem->pay(data.paymentType, data.amount, data.cardId, [this, data](Payments::PaymentResult result) {
-        onPaymentEvent(data.carId, result);
+        onPaymentEvent(data.accountId, result);
     });
 }
 
-void ParkingImpl::onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result) {
-    _gateControlStrategy->onPayment(carId, result);
+void ParkingImpl::onPaymentEvent(const boost::uuids::uuid& accountId, const Payments::PaymentResult& result) {
+    _gateControlStrategy->onPayment(accountId, result);
 }
 
 void ParkingImpl::requestBilling(const RequestBillingData& data) {
-    _billingListener.onBillingInformationProduced(0, _billingSystem.getBill(data.carId));
+    _billingListener.onBillingInformationProduced(data.accountId, _billingSystem.getBill(data.accountId));
 }
 
 } // namespace Parking

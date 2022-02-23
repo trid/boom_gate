@@ -37,7 +37,7 @@ private:
 
     void payed(const PaymentData& data);
 
-    void onPaymentEvent(const std::string& carId, const Payments::PaymentResult& result);
+    void onPaymentEvent(const boost::uuids::uuid& accountId, const Payments::PaymentResult& result);
     void requestBilling(const RequestBillingData& data);
 
     std::unique_ptr<Payments::PaymentSystem> _paymentSystem;

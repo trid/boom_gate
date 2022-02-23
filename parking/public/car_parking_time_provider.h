@@ -7,13 +7,15 @@
 
 #include <string>
 
+#include <boost/uuid/uuid.hpp>
+
 namespace Parking {
 
 class CarParkingTimeProvider {
 public:
     virtual ~CarParkingTimeProvider() = default;
 
-    [[nodiscard]] virtual unsigned int getParkingTime(const std::string& accountId) const = 0;
+    [[nodiscard]] virtual unsigned int getParkingTime(const boost::uuids::uuid& accountId) const = 0;
 };
 
 } // namespace Parking
