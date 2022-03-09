@@ -27,7 +27,8 @@ namespace Parking {
 
 class PayOnTicketMachineStrategy: public GateControlStrategy, private GateControllerBase{
 public:
-    explicit PayOnTicketMachineStrategy(CarRegistry& carsRegistry);
+    explicit PayOnTicketMachineStrategy(ParkingPlacesAvailabilityProvider& availabilityProvider,
+                                        CarsMovementListener& carsMovementListener);
 
     void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
     void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
@@ -36,7 +37,8 @@ public:
     void addGate(Gates::GateUPtr gate) override;
 
 private:
-    CarRegistry& _carsRegistry;
+    ParkingPlacesAvailabilityProvider& _availabilityProvider;
+    CarsMovementListener& _carsMovementListener;
     std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> _payedCars;
 };
 

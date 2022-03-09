@@ -59,7 +59,7 @@ TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
     ParkingErrorListenerStub parkingErrorListenerStub;
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, parkingErrorListenerStub};
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, carsRegistry, billingListenerMock, parkingErrorListenerStub};
     strategy.addGate(std::move(gateMock));
     strategy.onCarEntering(0, {});
     strategy.onCarLeaving(0, {});
@@ -81,7 +81,7 @@ TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
     EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
     ParkingErrorListenerStub parkingErrorListenerStub;
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, parkingErrorListenerStub};
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, carsRegistry, billingListenerMock, parkingErrorListenerStub};
     strategy.addGate(std::move(gateMock));
     strategy.onCarEntering(0, {});
     strategy.onCarLeaving(0, {});

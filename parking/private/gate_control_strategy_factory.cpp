@@ -16,12 +16,12 @@ std::unique_ptr<GateControlStrategy>
 GateControlStrategyFactory::createPayOnGate(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
                                             Billing::BillingInformationListener& billingListener,
                                             ParkingErrorListener& parkingErrorListener) {
-    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, billingListener, parkingErrorListener);
+    return std::make_unique<PayOnGateStrategy>(billingSystem, carsRegistry, carsRegistry, billingListener, parkingErrorListener);
 }
 
 std::unique_ptr<GateControlStrategy>
 GateControlStrategyFactory::createPayOnTicketMachine(CarRegistry& carsRegistry) {
-    return std::make_unique<PayOnTicketMachineStrategy>(carsRegistry);
+    return std::make_unique<PayOnTicketMachineStrategy>(carsRegistry, carsRegistry);
 }
 
 } // namespace Parking

@@ -10,17 +10,20 @@
 
 namespace Parking {
 
-PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
+PayOnGateStrategy::PayOnGateStrategy(Billing::BillingSystem& billingSystem,
+                                     ParkingPlacesAvailabilityProvider& availabilityProvider,
+                                     CarsMovementListener& carsMovementListener,
                                      Billing::BillingInformationListener& billingListener,
                                      ParkingErrorListener& parkingErrorListener) :
-        _carsRegistry(carsRegistry),
+        _availabilityProvider(availabilityProvider),
+        _carsMovementListener(carsMovementListener),
         _billingSystem(billingSystem),
         _billingListener(billingListener),
         _parkingErrorListener(parkingErrorListener) {}
 
 void PayOnGateStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
-    if (_carsRegistry.hasAvailableParkingLots()) {
-        _carsRegistry.onCarEnter(accountId);
+    if (_availabilityProvider.hasAvailableParkingLots()) {
+        _carsMovementListener.onCarEnter(accountId);
 
         GateControllerBase::releaseGate(gateId);
     }
@@ -40,12 +43,12 @@ void PayOnGateStrategy::onCarLeaving(std::size_t gateId, const boost::uuids::uui
 
 void PayOnGateStrategy::onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) {
     if (paymentResult != Payments::Accepted) {
-        // TODO Log payment errors
+        _parkingErrorListener.onError("Payment error");
         return;
     }
 
     auto gateId = _carToGateId[accountId];
-    _carsRegistry.onCarLeaved(accountId);
+    _carsMovementListener.onCarLeaved(accountId);
     _carToGateId.erase(accountId);
     GateControllerBase::releaseGate(gateId);
 }

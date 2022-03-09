@@ -17,6 +17,7 @@
 
 namespace Billing {
 class BillingInformationListener;
+
 class BillingSystem;
 } // namespace Billing
 
@@ -30,17 +31,23 @@ class ParkingErrorListener;
 
 class PayOnGateStrategy : public GateControlStrategy, private GateControllerBase {
 public:
-    PayOnGateStrategy(Billing::BillingSystem& billingSystem, CarRegistry& carsRegistry,
-                      Billing::BillingInformationListener& billingListener, ParkingErrorListener& parkingErrorListener);
+    PayOnGateStrategy(Billing::BillingSystem& billingSystem,
+                      ParkingPlacesAvailabilityProvider& availabilityProvider,
+                      CarsMovementListener& carsMovementListener,
+                      Billing::BillingInformationListener& billingListener,
+                      ParkingErrorListener& parkingErrorListener);
 
     void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+
     void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+
     void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) override;
 
     void addGate(Gates::GateUPtr gate) override;
 
 private:
-    CarRegistry& _carsRegistry;
+    ParkingPlacesAvailabilityProvider& _availabilityProvider;
+    CarsMovementListener& _carsMovementListener;
     std::unordered_map<boost::uuids::uuid, unsigned int, boost::hash<boost::uuids::uuid>> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
