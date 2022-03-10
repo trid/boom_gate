@@ -10,55 +10,84 @@
 #include "tests_shared.h"
 
 #include "../private/pay_on_gate_strategy.h"
+#include "../public/parking_error_listener.h"
 #include "../../gates/public/gate.h"
-#include "../../gates/public/gates_controller.h"
 
 namespace Parking::Test {
 
 using namespace testing;
 
-class GateControllerMock: public Gates::GatesController {
+class TimerMock: public Utils::Timer {
 public:
-    MOCK_METHOD(void, addGate, (std::unique_ptr<Gates::Gate>), (override));
-    MOCK_METHOD(void, releaseGate, (std::size_t), (override));
-    MOCK_METHOD(void, closeGate, (std::size_t), (override));
+    MOCK_METHOD(void, tick, (), (override));
+    MOCK_METHOD(unsigned int, getTicks, (), (const, override));
+};
+
+class CarRegistryMock: public CarRegistry {
+public:
+    MOCK_METHOD(void, onCarEnter, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, onCarLeft, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
+    MOCK_METHOD(bool, hasAvailableParkingLots, (), (const override));
+};
+
+class GateMock: public Gates::Gate {
+public:
+    MOCK_METHOD(void, open, (), (override));
+    MOCK_METHOD(void, close, (), (override));
+    bool isOpen() const override { return true; }
+};
+
+class ParkingErrorListenerStub: public ParkingErrorListener {
+public:
+    void onError(const std::string& description) override {
+
+    }
 };
 
 TEST(PayOnGateStrategyTestSuite, carEnteredBilledOnLeaving) {
-    GateControllerMock gateControllerMock;
     BillingSystemMock billingSystemMock;
     BillingListenerMock billingListenerMock;
-    std::unordered_map<std::string, unsigned int> carsRegistry;
+    TimerMock timerMock;
+    CarRegistryMock carsRegistry;
+    auto gateMock = std::make_unique<GateMock>();
+    Payments::CurrencyAmount expectedAmount{100, "USD"};
 
-    EXPECT_CALL(gateControllerMock, closeGate);
-    EXPECT_CALL(gateControllerMock, releaseGate);
-    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
-    EXPECT_CALL(billingListenerMock, billedFor);
+    EXPECT_CALL(*gateMock, open);
+    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(expectedAmount));
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
+    EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};
-    strategy.onCarEntering(0, "ab123c", 0);
-    strategy.onCarLeaving(0, "ab123c", 15);
+    ParkingErrorListenerStub parkingErrorListenerStub;
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, carsRegistry, billingListenerMock, parkingErrorListenerStub};
+    strategy.addGate(std::move(gateMock));
+    strategy.onCarEntering(0, {});
+    strategy.onCarLeaving(0, {});
 
-    ASSERT_EQ(100, billingListenerMock.getBilledAmount());
+    ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }
 
 TEST(PayOnGateStrategyTestSuite, carLeavesAfterPay) {
-    GateControllerMock gateControllerMock;
     BillingSystemMock billingSystemMock;
     BillingListenerMock billingListenerMock;
-    std::unordered_map<std::string, unsigned int> carsRegistry;
+    TimerMock timerMock;
+    CarRegistryMock carsRegistry;
+    auto gateMock = std::make_unique<GateMock>();
+    Payments::CurrencyAmount expectedAmount{100, "USD"};
 
-    EXPECT_CALL(gateControllerMock, closeGate);
-    EXPECT_CALL(gateControllerMock, releaseGate).Times(2);
-    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(100));
-    EXPECT_CALL(billingListenerMock, billedFor);
+    EXPECT_CALL(*gateMock, open).Times(2);
+    EXPECT_CALL(billingSystemMock, getBill).WillOnce(Return(expectedAmount));
+    EXPECT_CALL(billingListenerMock, onBillingInformationProduced);
+    EXPECT_CALL(timerMock, getTicks).WillRepeatedly(Return(0));
 
-    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, billingListenerMock, gateControllerMock};
-    strategy.onCarEntering(0, "ab123c", 0);
-    strategy.onCarLeaving(0, "ab123c", 15);
-    strategy.onPayment("ab123c", Payments::PaymentResult::Accepted);
+    ParkingErrorListenerStub parkingErrorListenerStub;
+    PayOnGateStrategy strategy{billingSystemMock, carsRegistry, carsRegistry, billingListenerMock, parkingErrorListenerStub};
+    strategy.addGate(std::move(gateMock));
+    strategy.onCarEntering(0, {});
+    strategy.onCarLeaving(0, {});
+    strategy.onPayment({}, Payments::PaymentResult::Accepted);
 
-    ASSERT_EQ(100, billingListenerMock.getBilledAmount());
+    ASSERT_EQ(expectedAmount, billingListenerMock.getBilledAmount());
 }
 
 } // namespace Parking::Test

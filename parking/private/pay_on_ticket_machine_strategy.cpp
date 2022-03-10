@@ -4,38 +4,43 @@
 
 #include "pay_on_ticket_machine_strategy.h"
 
-#include "../../gates/public/gates_controller.h"
+#include "../../gates/public/gate.h"
+
 
 namespace Parking {
 
-PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
-                                                       std::unordered_map<std::string, unsigned int>& carsRegistry,
-                                                       Billing::BillingInformationListener& billingListener,
-                                                       Gates::GatesController& gateController) : _carsRegistry(
-        carsRegistry), _billingSystem(billingSystem), _billingListener(billingListener), _gateController(gateController) {}
+PayOnTicketMachineStrategy::PayOnTicketMachineStrategy(ParkingPlacesAvailabilityProvider& availabilityProvider,
+                                                       CarsMovementListener& carsMovementListener):
+                                                       _availabilityProvider(availabilityProvider),
+                                                       _carsMovementListener(carsMovementListener) {}
 
-void PayOnTicketMachineStrategy::onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) {
-    _carsRegistry[carId] = tickId;
-    _gateController.releaseGate(gateId);
+void PayOnTicketMachineStrategy::onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) {
+    _carsMovementListener.onCarEnter(accountId);
+    GateControllerBase::releaseGate(gateId);
 }
 
-void PayOnTicketMachineStrategy::onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) {
-    auto carIter = _payedCars.find(carId);
+void PayOnTicketMachineStrategy::onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) {
+    auto carIter = _payedCars.find(accountId);
     if (carIter != _payedCars.end()) {
         _payedCars.erase(carIter);
-        _gateController.releaseGate(gateId);
+        _carsMovementListener.onCarLeft(accountId);
+        GateControllerBase::releaseGate(gateId);
     } else {
         // Ensure gate is closed
-        _gateController.closeGate(gateId);
+        GateControllerBase::closeGate(gateId);
     }
 }
 
-void PayOnTicketMachineStrategy::onPayment(const std::string& carId, Payments::PaymentResult paymentResult) {
+void PayOnTicketMachineStrategy::onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) {
     if (paymentResult != Payments::PaymentResult::Accepted) {
         // TODO: Log payment error
         return;
     }
-    _payedCars.insert(carId);
+    _payedCars.insert(accountId);
+}
+
+void PayOnTicketMachineStrategy::addGate(Gates::GateUPtr gate) {
+    GateControllerBase::addGate(std::move(gate));
 }
 
 } // namespace Parking

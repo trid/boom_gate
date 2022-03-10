@@ -5,12 +5,12 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "../private/default_gate_controller.h"
-#include "../public/gate.h"
+#include "../private/gate_controller_base.h"
+#include "../../gates/public/gate.h"
 
-namespace Gates::Test {
+namespace Parking::Test {
 
-class GateMock: public Gate {
+class GateMock: public Gates::Gate {
 public:
     MOCK_METHOD(void, open, (), (override));
     MOCK_METHOD(void, close, (), (override));
@@ -22,7 +22,7 @@ TEST(DefaultGateControllerTestSuite, releaseGateOpensAndClosesTheGate) {
     EXPECT_CALL(*gate, open);
     EXPECT_CALL(*gate, close);
 
-    DefaultGateController gateController;
+    GateControllerBase gateController;
     gateController.addGate(std::move(gate));
 
     gateController.releaseGate(0);
@@ -33,7 +33,7 @@ TEST(DefaultGateControllerTestSuite, closeGateGateOnlyClosed) {
     EXPECT_CALL(*gate, open).Times(0);
     EXPECT_CALL(*gate, close);
 
-    DefaultGateController gateController;
+    GateControllerBase gateController;
     gateController.addGate(std::move(gate));
 
     gateController.closeGate(0);

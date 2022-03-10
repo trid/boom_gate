@@ -6,7 +6,7 @@
 
 #include "simple_payment_system.h"
 #include "printing_card_payment_provider.h"
-#include "printing_cash_payment_provider_test_suite.h"
+#include "printing_cash_payment_provider.h"
 #include "printing_subscription_payment_provider.h"
 
 namespace Payments {

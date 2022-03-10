@@ -9,6 +9,7 @@
 #include "../private/card_payment_provider.h"
 #include "../private/simple_payment_system.h"
 #include "../private/subscription_card_payment_provider.h"
+#include "../public/currency_amount.h"
 
 namespace Payments::Tests {
 
@@ -16,12 +17,12 @@ using namespace testing;
 
 class CashPaymentProviderMock : public CashPaymentProvider {
 public:
-    MOCK_METHOD(void, pay, (unsigned int, PaymentCallback), (override));
+    MOCK_METHOD(void, pay, (const CurrencyAmount&, PaymentCallback), (override));
 };
 
 class CardPaymentProviderMock : public CardPaymentProvider {
 public:
-    MOCK_METHOD(void, pay, (unsigned int, const std::string&, PaymentCallback), (override));
+    MOCK_METHOD(void, pay, (const CurrencyAmount&, const std::string&, PaymentCallback), (override));
 };
 
 class SubscriptionCardPaymentProviderMock : public SubscriptionCardPaymentProvider {
@@ -38,7 +39,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentInCash) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider), nullptr);
 
-    paymentSystem.pay(PaymentType::Cash, 100, "", [](PaymentResult) {});
+    paymentSystem.pay(PaymentType::Cash, {100, "USD"}, "", [](PaymentResult) {});
 }
 
 TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
@@ -50,7 +51,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentWithCard) {
 
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider), nullptr);
 
-    paymentSystem.pay(PaymentType::CashCard, 100, "FOO", [](PaymentResult) {});
+    paymentSystem.pay(PaymentType::CashCard, {100, "UAH"}, "FOO", [](PaymentResult) {});
 }
 
 TEST(PrintingCardPaymentProviderTestSuite, paymentWithSubscribtionCard) {
@@ -63,7 +64,7 @@ TEST(PrintingCardPaymentProviderTestSuite, paymentWithSubscribtionCard) {
     SimplePaymentSystem paymentSystem(std::move(cashPaymentProvider), std::move(cardPaymentProvider),
                                       std::move(subscriptionCardPaymentProvider));
 
-    paymentSystem.pay(PaymentType::SubscriptionCard, 0, "FOO", [](PaymentResult) {});
+    paymentSystem.pay(PaymentType::SubscriptionCard, {0, "USD"}, "FOO", [](PaymentResult) {});
 }
 
 } // namespace Payments::Tests

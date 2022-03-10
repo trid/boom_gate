@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "../public/payment_system.h"
+#include "../public/currency_amount.h"
 
 namespace Payments {
 
@@ -22,7 +23,7 @@ public:
                         std::unique_ptr<SubscriptionCardPaymentProvider> subscriptionCardPaymentProvider);
 
     void
-    pay(PaymentType paymentType, unsigned int amount, const std::string& paymentData, PaymentCallback callback) override;
+    pay(PaymentType paymentType, const Payments::CurrencyAmount& amount, const std::string& paymentData, PaymentCallback callback) override;
 
 private:
     std::unique_ptr<CashPaymentProvider> _cashPaymentProvider;

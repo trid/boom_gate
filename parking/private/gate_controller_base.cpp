@@ -2,15 +2,17 @@
 // Created by TriD on 15.02.2022.
 //
 
-#include "default_gate_controller.h"
+#include "gate_controller_base.h"
 
-#include "../public/gate.h"
+#include "../../gates/public/gate.h"
 
-void Gates::DefaultGateController::addGate(std::unique_ptr<Gate> gate) {
+namespace Parking {
+
+void GateControllerBase::addGate(Gates::GateUPtr gate) {
     _gates.push_back(std::move(gate));
 }
 
-void Gates::DefaultGateController::releaseGate(std::size_t gateId) {
+void GateControllerBase::releaseGate(std::size_t gateId) {
     checkGateValid(gateId);
     auto& gate = _gates[gateId];
     gate->open();
@@ -18,14 +20,16 @@ void Gates::DefaultGateController::releaseGate(std::size_t gateId) {
     gate->close();
 }
 
-void Gates::DefaultGateController::checkGateValid(size_t gateId) {
+void GateControllerBase::checkGateValid(size_t gateId) {
     if (gateId >= _gates.size()) {
         // TODO Log error here
     }
 }
 
-void Gates::DefaultGateController::closeGate(std::size_t gateId) {
+void GateControllerBase::closeGate(std::size_t gateId) {
     checkGateValid(gateId);
     auto& gate = _gates[gateId];
     gate->close();
 }
+
+} // namespace Gates

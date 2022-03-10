@@ -7,13 +7,17 @@
 
 #include <string>
 
+#include <boost/uuid/uuid.hpp>
+
+#include "../../payments/public/currency_amount.h"
+
 namespace Billing {
 
 class BillingSystem {
 public:
     virtual ~BillingSystem() = default;
 
-    virtual unsigned int getBill(const std::string& carId, unsigned int currentTick) = 0;
+    virtual Payments::CurrencyAmount getBill(const boost::uuids::uuid& accountId) = 0;
 };
 
 } // namespace Billing

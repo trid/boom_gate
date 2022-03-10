@@ -9,11 +9,13 @@
 
 namespace Payments {
 
+struct CurrencyAmount;
+
 class CardPaymentProvider {
 public:
     virtual ~CardPaymentProvider() = default;
 
-    virtual void pay(unsigned int amount, const std::string& cardNumber, PaymentCallback callback) = 0;
+    virtual void pay(const CurrencyAmount& amount, const std::string& cardNumber, PaymentCallback callback) = 0;
 };
 
 } // namespace Payments

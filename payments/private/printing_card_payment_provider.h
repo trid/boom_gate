@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "card_payment_provider.h"
+#include "../public/currency_amount.h"
 
 namespace Payments {
 
@@ -15,7 +16,7 @@ class PrintingCardPaymentProvider : public CardPaymentProvider {
 public:
     explicit PrintingCardPaymentProvider(std::ostream& output);
 
-    void pay(unsigned int amount, const std::string& cardNumber, PaymentCallback callback) override;
+    void pay(const CurrencyAmount& amount, const std::string& cardNumber, PaymentCallback callback) override;
 
 private:
     std::ostream& _output;

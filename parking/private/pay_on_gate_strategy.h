@@ -7,12 +7,17 @@
 
 #include <unordered_map>
 #include <vector>
-#include <boost/optional.hpp>
+
+#include <boost/functional/hash.hpp>
 
 #include "../public/gate_control_strategy.h"
+#include "../../shared/public/timer.h"
+#include "../public/car_registry.h"
+#include "gate_controller_base.h"
 
 namespace Billing {
 class BillingInformationListener;
+
 class BillingSystem;
 } // namespace Billing
 
@@ -22,24 +27,33 @@ class GatesController;
 
 namespace Parking {
 
-class PayOnGateStrategy : public GateControlStrategy {
+class ParkingErrorListener;
+
+class PayOnGateStrategy : public GateControlStrategy, private GateControllerBase {
 public:
     PayOnGateStrategy(Billing::BillingSystem& billingSystem,
-                      std::unordered_map<std::string, unsigned int>& carsRegistry,
-                      Billing::BillingInformationListener& billingListener, Gates::GatesController& gateController);
+                      ParkingPlacesAvailabilityProvider& availabilityProvider,
+                      CarsMovementListener& carsMovementListener,
+                      Billing::BillingInformationListener& billingListener,
+                      ParkingErrorListener& parkingErrorListener);
 
-    void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
-    void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
-    void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
+    void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+
+    void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+
+    void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) override;
+
+    void addGate(Gates::GateUPtr gate) override;
 
 private:
-    std::unordered_map<std::string, unsigned int>& _carsRegistry;
-    std::unordered_map<std::string, unsigned int> _carToGateId;
+    ParkingPlacesAvailabilityProvider& _availabilityProvider;
+    CarsMovementListener& _carsMovementListener;
+    std::unordered_map<boost::uuids::uuid, unsigned int, boost::hash<boost::uuids::uuid>> _carToGateId;
 
     Billing::BillingSystem& _billingSystem;
     Billing::BillingInformationListener& _billingListener;
 
-    Gates::GatesController& _gateController;
+    ParkingErrorListener& _parkingErrorListener;
 };
 
 } // namespace Parking

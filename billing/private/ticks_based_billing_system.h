@@ -8,16 +8,20 @@
 #include <unordered_map>
 
 #include "../public/billing_system.h"
+#include "../../shared/public/timer.h"
+#include "../../parking/public/car_parking_time_provider.h"
 
 namespace Billing {
 
 class TicksBasedBillingSystem: public BillingSystem {
 public:
-    explicit TicksBasedBillingSystem(const std::unordered_map<std::string, unsigned int>& registry);
+    explicit TicksBasedBillingSystem(const Utils::Timer& timer,
+                                     const Parking::CarParkingTimeProvider& timeProvider);
 
-    unsigned int getBill(const std::string& carId, unsigned int currentTick) override;
+    Payments::CurrencyAmount getBill(const boost::uuids::uuid& accountId) override;
 private:
-    const std::unordered_map<std::string, unsigned int>& _registry;
+    const Utils::Timer& _timer;
+    const Parking::CarParkingTimeProvider& _timeProvider;
 };
 
 } // namespace Billing

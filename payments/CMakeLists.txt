@@ -13,7 +13,7 @@ add_library(payments private/printing_card_payment_provider.cpp
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(Payments_Tests_run tests/printing_card_payment_provider_test_suite.cpp
-        tests/printing_cash_payment_provider_test_suite.cpp
+        tests/printing_cash_payment_provider.cpp
         tests/simple_payment_system_test_suite.cpp
         tests/printing_subscription_card_payment_provider_test_suite.cpp)
 target_link_libraries(Payments_Tests_run payments gtest gtest_main gmock gmock_main)

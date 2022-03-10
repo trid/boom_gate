@@ -5,41 +5,41 @@
 #ifndef BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 #define BOOM_GATE_APPLICATION_PAY_ON_TICKET_MACHINE_STRATEGY_H
 
-#include "../public/gate_control_strategy.h"
-
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+#include <boost/functional/hash.hpp>
+
+#include "../public/gate_control_strategy.h"
+#include "../../shared/public/timer.h"
+#include "../public/car_registry.h"
+#include "gate_controller_base.h"
+
 
 namespace Billing {
 class BillingInformationListener;
 class BillingSystem;
 } // namespace Billing
 
-namespace Gates {
-class GatesController;
-} // namespace Gates
 
 namespace Parking {
 
-class PayOnTicketMachineStrategy: public GateControlStrategy{
+class PayOnTicketMachineStrategy: public GateControlStrategy, private GateControllerBase{
 public:
-    PayOnTicketMachineStrategy(Billing::BillingSystem& billingSystem,
-                               std::unordered_map<std::string, unsigned int>& carsRegistry,
-                               Billing::BillingInformationListener& billingListener, Gates::GatesController& gateController);
+    explicit PayOnTicketMachineStrategy(ParkingPlacesAvailabilityProvider& availabilityProvider,
+                                        CarsMovementListener& carsMovementListener);
 
-    void onCarEntering(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
-    void onCarLeaving(std::size_t gateId, const std::string& carId, unsigned int tickId) override;
-    void onPayment(const std::string& carId, Payments::PaymentResult paymentResult) override;
+    void onCarEntering(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onCarLeaving(std::size_t gateId, const boost::uuids::uuid& accountId) override;
+    void onPayment(const boost::uuids::uuid& accountId, Payments::PaymentResult paymentResult) override;
+
+    void addGate(Gates::GateUPtr gate) override;
 
 private:
-    std::unordered_map<std::string, unsigned int>& _carsRegistry;
-    std::unordered_set<std::string> _payedCars;
-
-    Billing::BillingSystem& _billingSystem;
-    Billing::BillingInformationListener& _billingListener;
-
-    Gates::GatesController& _gateController;
+    ParkingPlacesAvailabilityProvider& _availabilityProvider;
+    CarsMovementListener& _carsMovementListener;
+    std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> _payedCars;
 };
 
 } // namespace Parking

@@ -5,6 +5,7 @@
 #ifndef BOOM_GATE_APPLICATION_TESTS_SHARED_H
 #define BOOM_GATE_APPLICATION_TESTS_SHARED_H
 
+#include <boost/uuid/uuid.hpp>
 #include "../../billing/public/billing_information_listener.h"
 #include "../../billing/public/billing_system.h"
 
@@ -12,25 +13,25 @@ namespace Parking::Test {
 
 class BillingSystemMock : public Billing::BillingSystem {
 public:
-    MOCK_METHOD(unsigned int, getBill, (const std::string&, unsigned int), (override));
+    MOCK_METHOD(Payments::CurrencyAmount, getBill, (const boost::uuids::uuid&), (override));
 };
 
 class BillingListenerMock : public Billing::BillingInformationListener {
 public:
     BillingListenerMock() {
-        ON_CALL(*this, billedFor).WillByDefault(
-                [this](size_t, unsigned int amount) {
+        ON_CALL(*this, onBillingInformationProduced).WillByDefault(
+                [this](const boost::uuids::uuid&, const Payments::CurrencyAmount& amount) {
                     _billedAmount = amount;
                 });
     }
 
-    unsigned int getBilledAmount() const {
+    const Payments::CurrencyAmount& getBilledAmount() const {
         return _billedAmount;
     }
 
-    MOCK_METHOD(void, billedFor, (size_t, unsigned int), (override));
+    MOCK_METHOD(void, onBillingInformationProduced, (const boost::uuids::uuid&, const Payments::CurrencyAmount&), (override));
 private:
-    unsigned int _billedAmount = 0;
+    Payments::CurrencyAmount _billedAmount{0, ""};
 };
 
 } // namespace Parking::Test
