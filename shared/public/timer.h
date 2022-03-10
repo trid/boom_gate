@@ -8,6 +8,8 @@
 namespace Utils {
 class Timer {
 public:
+    virtual ~Timer() = default;
+
     virtual void tick() = 0;
     [[nodiscard]] virtual unsigned int getTicks() const = 0;
 };

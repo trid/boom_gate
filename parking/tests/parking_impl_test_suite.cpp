@@ -54,7 +54,7 @@ public:
 class CarRegistryMock: public CarRegistry {
 public:
     MOCK_METHOD(void, onCarEnter, (const boost::uuids::uuid&), (override));
-    MOCK_METHOD(void, onCarLeaved, (const boost::uuids::uuid&), (override));
+    MOCK_METHOD(void, onCarLeft, (const boost::uuids::uuid&), (override));
     MOCK_METHOD(unsigned int, getParkingTime, (const boost::uuids::uuid&), (const override));
     MOCK_METHOD(bool, hasAvailableParkingLots, (), (const override));
 };

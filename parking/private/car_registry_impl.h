@@ -21,7 +21,7 @@ public:
     explicit CarRegistryImpl(const Utils::Timer& timer, unsigned int maxParkingPlaces);
 
     void onCarEnter(const boost::uuids::uuid& accountId) override;
-    void onCarLeaved(const boost::uuids::uuid& accountId) override;
+    void onCarLeft(const boost::uuids::uuid& accountId) override;
     unsigned int getParkingTime(const boost::uuids::uuid& accountId) const override;
 
     bool hasAvailableParkingLots() const override;

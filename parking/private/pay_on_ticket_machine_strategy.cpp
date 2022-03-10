@@ -23,7 +23,7 @@ void PayOnTicketMachineStrategy::onCarLeaving(std::size_t gateId, const boost::u
     auto carIter = _payedCars.find(accountId);
     if (carIter != _payedCars.end()) {
         _payedCars.erase(carIter);
-        _carsMovementListener.onCarLeaved(accountId);
+        _carsMovementListener.onCarLeft(accountId);
         GateControllerBase::releaseGate(gateId);
     } else {
         // Ensure gate is closed

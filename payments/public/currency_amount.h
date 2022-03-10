@@ -10,7 +10,7 @@
 namespace Payments {
 
 struct CurrencyAmount {
-    unsigned int amount;
+    unsigned int amount = 0;
     std::string isoCurrency;
 
     bool operator==(const CurrencyAmount& other) const {

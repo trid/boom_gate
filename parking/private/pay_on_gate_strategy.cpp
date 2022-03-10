@@ -48,7 +48,7 @@ void PayOnGateStrategy::onPayment(const boost::uuids::uuid& accountId, Payments:
     }
 
     auto gateId = _carToGateId[accountId];
-    _carsMovementListener.onCarLeaved(accountId);
+    _carsMovementListener.onCarLeft(accountId);
     _carToGateId.erase(accountId);
     GateControllerBase::releaseGate(gateId);
 }

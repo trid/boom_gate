@@ -12,7 +12,7 @@ void Parking::CarRegistryImpl::onCarEnter(const boost::uuids::uuid& accountId) {
     _carEnteredTime[accountId] = _timer.getTicks();
 }
 
-void Parking::CarRegistryImpl::onCarLeaved(const boost::uuids::uuid& accountId) {
+void Parking::CarRegistryImpl::onCarLeft(const boost::uuids::uuid& accountId) {
     _carEnteredTime.erase(accountId);
 }
 

@@ -14,7 +14,7 @@ public:
     virtual ~CarsMovementListener() = default;
 
     virtual void onCarEnter(const boost::uuids::uuid& accountId) = 0;
-    virtual void onCarLeaved(const boost::uuids::uuid& accountId) = 0;
+    virtual void onCarLeft(const boost::uuids::uuid& accountId) = 0;
 };
 
 } // namespace Parking
